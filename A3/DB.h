@@ -59,6 +59,24 @@ extern DataBase *Db;
  *  6- Ward
  */
 
+ /*
+    *This functions (importDB) takes the name of a .csv file as paramter and creates and populates
+    *the Database with corresponding data set information
+ */
+//// **** CHECK IF THIS IS CORRECT - come back to 
+void importDB(char *filename);
+
+/*
+ *This function (exportDB) takes the name of a .csv file as paramter and creates a .csv file
+ *containing the information of the database
+
+* The following exported .csv file must exactly be the same as the original .csv file from which the Database 
+ * was created 
+*/
+//// ***** CHECK IF THIS IS CORRECT - come back to 
+void exportDB(char *filename);
+
+
 int countEntries(char *memberName, char * value);
 
 /*
@@ -85,8 +103,6 @@ void sortByMember(char *memberName);
  * corresponding table.
  */
 void editTableEntry(int tableID, char *memberName, char *value);
-
-
 
 /*
  * print a listing of picnic tables grouped by neigbourhoods in ascending 
