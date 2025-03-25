@@ -22,7 +22,7 @@ void exportDB(char *filename){
 
 // Count Entries (Currently Empty Function)
 int countEntries(char *memberName, char * value){
-    return; // Return for now - as we're creating empty functions (will be worked on later) for MS1
+    return 0; // Return for now - as we're creating empty functions (will be worked on later) for MS1
 }
 
 // SortByMember Function
@@ -40,6 +40,10 @@ void reportByNeighbourhood(){
 }
 
 void reportByWard(){
-    return // Return for now - as we're creating empty fuinctions (will be worked on later) for MS1
+    return; // Return for now - as we're creating empty fuinctions (will be worked on later) for MS1
 }
 
+
+int main() {
+    return 0;
+}

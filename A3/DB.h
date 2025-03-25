@@ -19,6 +19,53 @@
  * STRUCTS AS NEEDED.
  */
 
+ // Similar to Lab Assignment #2 (Setting up Struct(s) for Hashtable and Hashtable entries)
+ typedef struct{
+    int code; 
+    char *value;
+ } TableCVEntry;
+
+// Similar to Lab Assignment #2 (Setting up Struct(s) for Hashtable and Hashtable entries)
+ typedef struct{
+    TableCVEntry *tableT_entries;
+    int tableT_CapacitySize;
+    int tableT_ElementCount;
+ } Table;
+
+// Similar to Lab Assignment #2 (Setting up Struct(s) for Hashtable and Hashtable entries)
+ typedef struct{
+    int code; 
+    char *value;
+ } NeighbourhoodCodeValTableEntry;
+
+// Similar to Lab Assignment #2 (Setting up Struct(s) for Hashtable and Hashtable entries)
+ typedef struct{
+    NeighbourhoodCodeValTableEntry *neighbourhoodT_entries;
+    int neighbourhoodT_CapacitySize;
+    int neighbourhoodT_ElementCount;
+ } NeighbourhoodTable;
+
+ // Similar to Lab Assignment #2 (Setting up Struct(s) for Hashtable and Hashtable entries)
+ typedef struct{
+    int tableId;
+    int siteId;
+    int tableTypeId;
+    int surfaceMaterialId;
+    int structuralMaterialId;
+    char *streetAvenue;
+    int neighbhdId;
+    char *ward;
+    char *latitude;
+    char *longitude;
+ } PicnicTableEntry;
+
+ // Similar to Lab Assignment #2 (Setting up Struct(s) for Hashtable and Hashtable entries)
+ typedef struct{
+    PicnicTableEntry *picnicT_entries;
+    int picnicT_CapacitySize;
+    int picnicT_ElementCount;
+ } PicnicTable;
+
 /*
  * The INIT_SIZE is only relevant if you are using arrays for your data structures. 
  * If you are using linked lists you will not need it
@@ -35,7 +82,7 @@ typedef struct {
     Table *tableTypeTable;
     Table *surfaceMaterialTable;
     Table *structuralMaterialTable;
-    NeighbourhoodTable *neighborhoodTable;
+    NeighbourhoodTable *neighbourhoodTable;
     PicnicTable *picnicTableTable;
 } DataBase;
 
