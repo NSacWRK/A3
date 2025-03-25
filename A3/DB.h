@@ -5,9 +5,9 @@
  * Please do not modify any code in this file!  We will be testing your code
  * under the assumption that the public interface matches this interface.
  *
- * Author: <TODO: Group Member Names>
- * Lab instructor: <TODO: Your lab instructor's name here>
- * Lecture instructor: <TODO: Your lecture instructor's name here>
+ * Author: <TODO: Aksh Chand, Forbes Feild, Vickram Gill, Naval Sachar>
+ * Lab instructor: <TODO: Dhara Wagh>
+ * Lecture instructor: <TODO: Dhara Wagh>
  */
 
 #ifndef DB_H
@@ -18,6 +18,53 @@
  * WHICH WILL BE FIELDS IN THE STRUCT DataBase BELOW. YOU MAY DECLARE ADDITIONAL
  * STRUCTS AS NEEDED.
  */
+
+ // Similar to Lab Assignment #2 (Setting up Struct(s) for Hashtable and Hashtable entries)
+ typedef struct{
+    int code; 
+    char *value;
+ } TableCVEntry;
+
+// Similar to Lab Assignment #2 (Setting up Struct(s) for Hashtable and Hashtable entries)
+ typedef struct{
+    TableCVEntry *tableT_entries;
+    int tableT_CapacitySize;
+    int tableT_ElementCount;
+ } Table;
+
+// Similar to Lab Assignment #2 (Setting up Struct(s) for Hashtable and Hashtable entries)
+ typedef struct{
+    int code; 
+    char *value;
+ } NeighbourhoodCodeValTableEntry;
+
+// Similar to Lab Assignment #2 (Setting up Struct(s) for Hashtable and Hashtable entries)
+ typedef struct{
+    NeighbourhoodCodeValTableEntry *neighbourhoodT_entries;
+    int neighbourhoodT_CapacitySize;
+    int neighbourhoodT_ElementCount;
+ } NeighbourhoodTable;
+
+ // Similar to Lab Assignment #2 (Setting up Struct(s) for Hashtable and Hashtable entries)
+ typedef struct{
+    int tableId;
+    int siteId;
+    int tableTypeId;
+    int surfaceMaterialId;
+    int structuralMaterialId;
+    char *streetAvenue;
+    int neighbhdId;
+    char *ward;
+    char *latitude;
+    char *longitude;
+ } PicnicTableEntry;
+
+ // Similar to Lab Assignment #2 (Setting up Struct(s) for Hashtable and Hashtable entries)
+ typedef struct{
+    PicnicTableEntry *picnicT_entries;
+    int picnicT_CapacitySize;
+    int picnicT_ElementCount;
+ } PicnicTable;
 
 /*
  * The INIT_SIZE is only relevant if you are using arrays for your data structures. 
@@ -44,6 +91,11 @@ typedef struct {
 /* DB.c should have the definition of this variable*/
 extern DataBase *Db;
 
+// *********************
+// Ask if we should implement importDB and exportDB in the header file (mentions not to make any changes here)
+//void importDB(char *filename);
+
+//void exportDB(char *filename);
 
 /*
  * Take the name of a member of the picnicTable entry and a value for that member 
@@ -58,6 +110,7 @@ extern DataBase *Db;
  *  5- Neighborhood Name
  *  6- Ward
  */
+
 
 int countEntries(char *memberName, char * value);
 
@@ -85,8 +138,6 @@ void sortByMember(char *memberName);
  * corresponding table.
  */
 void editTableEntry(int tableID, char *memberName, char *value);
-
-
 
 /*
  * print a listing of picnic tables grouped by neigbourhoods in ascending 
