@@ -5,9 +5,9 @@
  * Please do not modify any code in this file!  We will be testing your code
  * under the assumption that the public interface matches this interface.
  *
- * Author: <TODO: Group Member Names>
- * Lab instructor: <TODO: Your lab instructor's name here>
- * Lecture instructor: <TODO: Your lecture instructor's name here>
+ * Author: <TODO: Aksh Chand, Forbes Feild, Vickram Gill, Naval Sachar>
+ * Lab instructor: <TODO: Dhara Wagh>
+ * Lecture instructor: <TODO: Dhara Wagh>
  */
 
 #ifndef DB_H
@@ -82,7 +82,7 @@ typedef struct {
     Table *tableTypeTable;
     Table *surfaceMaterialTable;
     Table *structuralMaterialTable;
-    NeighbourhoodTable *neighbourhoodTable;
+    NeighbourhoodTable *neighborhoodTable;
     PicnicTable *picnicTableTable;
 } DataBase;
 
@@ -91,6 +91,11 @@ typedef struct {
 /* DB.c should have the definition of this variable*/
 extern DataBase *Db;
 
+// *********************
+// Ask if we should implement importDB and exportDB in the header file (mentions not to make any changes here)
+//void importDB(char *filename);
+
+//void exportDB(char *filename);
 
 /*
  * Take the name of a member of the picnicTable entry and a value for that member 
@@ -105,23 +110,6 @@ extern DataBase *Db;
  *  5- Neighborhood Name
  *  6- Ward
  */
-
- /*
-    *This functions (importDB) takes the name of a .csv file as paramter and creates and populates
-    *the Database with corresponding data set information
- */
-//// **** CHECK IF THIS IS CORRECT - come back to 
-void importDB(char *filename);
-
-/*
- *This function (exportDB) takes the name of a .csv file as paramter and creates a .csv file
- *containing the information of the database
-
-* The following exported .csv file must exactly be the same as the original .csv file from which the Database 
- * was created 
-*/
-//// ***** CHECK IF THIS IS CORRECT - come back to 
-void exportDB(char *filename);
 
 
 int countEntries(char *memberName, char * value);

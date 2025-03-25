@@ -4,9 +4,9 @@
  * TODO: Provide a high-level description of what is contained
  * in this file.
  *
- * Author: <TODO: Group Member Names>
- * Lab instructor: <TODO: Your lab instructor's name here>
- * Lecture instructor: <TODO: Your lecture instructor's name here>
+ * Author: <TODO: Aksh Chand, Forbes Feild, Vickram Gill, Naval Sachar>
+ * Lab instructor: <TODO: Dhara Wagh>
+ * Lecture instructor: <TODO: Dhara Wagh>
 */
 
 //You may include other original headers as you see fit
