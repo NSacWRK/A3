@@ -14,12 +14,14 @@
 // This function will take the name of a .csv file as parameter and creates and populates the Database
 // with the correpsonding data set information
 void importDB(char *filename){
+    //nav works in this 
     return; // Return for now - as we're creating empty functions (will be worked on later) for MS1
 }
 
 // This Function takes the name of a .csv file as paramter and creates a .csv file containing the information of the Database
 // (exported .csv file must be exactly the same as the original .csv file from which the Database was created)
 void exportDB(char *filename){
+    //nav works on this 
     return; // Return for now - as we're creating empty functions (will be worked on later) for MS1
 }
 
@@ -106,6 +108,7 @@ int countEntries(char *memberName, char * value){
 // Tis function takes the name of a member of the picnicTable entry as an argument and sorts the table in ascending order
 // f the entry values of that member 
 void sortByMember(char *memberName){
+    //this one nav will do 
     return; // Return for now - as we're creating empty functions (will be worked on later) for MS1
 }
 
