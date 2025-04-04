@@ -76,7 +76,7 @@ int countEntries(char *memberName, char * value){
         }
 
         // # 4) Neighbourhood ID (Look at CMPT_201_Database_Description PDF - Table Relationships)
-        else if (strcmp(memberName, "Neighbourhood ID") == 0){
+        else if (strcmp(memberName, "Neighbourhood Id") == 0){
             nbhdID = atoi(value);
             if(picTEntry.neighbhdId == nbhdID){
                 entryCount++;
@@ -121,9 +121,113 @@ void reportByNeighbourhood(){
     return; // Return for now - as we're creating empty functions (will be worked on later) for MS1
 }
 
-// this function produces a listing of picnic tables grouped by wards in ascending order 
+// this function produces a listing of picnic tables grouped by wards in ascending order
+
+// Resources Used for Help:
+    // - https://stackoverflow.com/questions/40033310/sorting-a-list-of-strings-in-alphabetical-order-c
+    // - https://www.w3schools.com/dsa/dsa_algo_bubblesort.php
+    
 void reportByWard(){
-    return; // Return for now - as we're creating empty functions (will be worked on later) for MS1
+    int i, j, k;
+    char *wardArray[64];
+    char *currentWard, *tmpWard;
+    int wardAddedCounter;
+    int picnicTCount, diffWardCount, tableTEC, surfaceMEC, structuralEC, neighEC;
+
+    picnicTCount = Db->picnicTableTable->picnicT_ElementCount;
+    diffWardCount = 0; // distinct / different wards
+
+    if(Db == NULL || Db->picnicTableTable == NULL){
+        printf("Error - No Database Available, or No Elements Within PicnicTable Available");
+        return 0;
+    }
+
+    for(i=0; i < picnicTCount; i++){
+         currentWard = Db->picnicTableTable->picnicT_entries[i].ward;
+         wardAddedCounter = 0; //already seen this ward (alreadyadded)
+
+         for(j=0; j < diffWardCount; j++){
+            if(strcmp(wardArray[j], currentWard) == 0){
+                wardAddedCounter = 1;
+                break;
+            }
+         }
+
+         if(wardAddedCounter == 0){
+            wardArray[diffWardCount++] = currentWard;
+         }
+
+    }
+
+    for(i=0; i < diffWardCount; i++){
+        for(j=0; j < diffWardCount; j++){
+            if(strcmp(wardArray[i], wardArray[j]) < 0){
+                tmpWard = wardArray[i];
+                wardArray[i] = wardArray[j];
+                wardArray[j] = tmpWard;
+
+            }
+        }
+    }
+
+    for(i=0; i < diffWardCount; i++){
+        printf("\n%s\n", wardArray[i]);
+        printf("************************************************\n")
+
+        for(j=0; j < picnicTCount; j++){
+            PicnicTableEntry picTE;
+            picTE = Db->picnicTableTable->picnicT_entries[j];
+
+            if(strcmp(picTE.ward, wardArray[i]) == 0){
+                // Since these are integer values, PicnicTable doesnt store full names like "Wood" - 
+                // It Uses codes / ID's that are associated with certain values that link to the lookup tables (TableType, SurfaceMat, StructMat, Neigh...)
+                // Called Foreign Keys - ID"s that refer to entries in lookup Tables
+
+                char *tableT; // Lookup Table (Watch Video Once Again To Provide Explaination)
+                char *surfaceMat;// // Lookup Table (Watch Video Once Again To Provide Explaination)
+                char *structuralMat; //Lookup Table (Watch Video Once Again To Provide Explaination)
+                char *neighbourhoodName; // Lookup Table (Watch Video Once Again To Provide Explaination)
+
+                // Element Counts for 'For Loop' - just for clairty/visability sake
+                tableTEC = Db->tableTypeTable->tableT_ElementCount;
+                surfaceMEC = Db->surfaceMaterialTable->tableT_ElementCount;
+                structuralEC = Db->structuralMaterialTable->tableT_ElementCount;
+                neighEC = Db->neighborhoodTable->neighbourhoodT_ElementCount;
+
+                for (k=0; k < tableTEC; k++){
+                    if(Db->tableTypeTable->tableT_entries[k].code == picTE.tableTypeId){
+                        tableT = Db->tableTypeTable->tableT_entries[k].value;
+                        break;
+                    }
+                }
+
+                for(k=0; k < surfaceMEC; k++){
+                    if(Db->surfaceMaterialTable->tableT_entries[k].code == picTE.surfaceMaterialId){
+                        surfaceMat= Db->surfaceMaterialTable->tableT_entries[k].value;
+                        break;
+                    }
+                }
+
+                for(k=0; k < structuralEC; k++){
+                    if(Db->structuralMaterialTable->tableT_entries[k].code == picTE.structuralMaterialId){
+                        structuralMat = Db->structuralMaterialTable->tableT_entries[k].value;
+                        break;
+                    }
+                }
+
+                for(k=0; k < neighEC; k++){
+                    if(Db->neighborhoodTable->neighbourhoodT_entries[k].code == picTE.neighbhdId){
+                        neighbourhoodName = Db->neighborhoodTable->neighbourhoodT_entries[k].value;
+                        break;
+                    }
+                }
+
+                printf("%d     %s     %s     %s     %s     %d     %s     %s     %s", picTE.siteId, tableT, surfaceMat, structuralMat, picTE.streetAvenue, picTE.neighbhdId, neighbourhoodName, picTE.latitude, picTE.longitude);
+
+            }
+        }
+    }
+    return; 
 }
 
 // This function will free the DB 
