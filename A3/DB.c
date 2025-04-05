@@ -120,16 +120,25 @@ void editTableEntry(int tableID, char *memberName, char *value){
 }
 
 // this function produces a listing of picnic tables grouped by neighbourhoods in ascending alphabetical order
+
+// Similarly to ReportByWard - the same format and approach was used (as they're quite similar in functionality - just one sorts according to 
+// ward and the other according to Neighbourhood - will still using the Lookup Table (using the NeighbourhoodId - neighID - to access the certain 
+// elements))
+    // Resources Used for Help:
+    // - https://stackoverflow.com/questions/40033310/sorting-a-list-of-strings-in-alphabetical-order-c
+    // - https://www.w3schools.com/dsa/dsa_algo_bubblesort.php
+    
+
 void reportByNeighbourhood(){
     int i, j, k;
-    char *wardArray[64];
-    char *currentNeighbourName, *tmpNeighbhd;
-    int neighAddedCounter;
+    char *neighArray[64];
+    char *currentNeighbourName, *tmpNeigh;
+    int neighAddedCounter, currentNeighbourID;
     int picnicTCount, diffNeighCount, tableTEC, surfaceMEC, structuralEC, neighEC;
-    currentNeighbourName = NULL;
+    //currentNeighbourName = NULL;
 
     picnicTCount = Db->picnicTableTable->picnicT_ElementCount;
-    diffNeighCountCount = 0; // distinct / different wards
+    diffNeighCount = 0; // distinct / different wards
 
     if(Db == NULL || Db->picnicTableTable == NULL){
         printf("Error - No Database Available, or No Elements Within PicnicTable Available");
@@ -137,42 +146,66 @@ void reportByNeighbourhood(){
     }
 
     for(i=0; i < picnicTCount; i++){
-        currentNeighbourName = Db->picnicTableTable->picnicT_entries[i].neighbhdId;
-         wardAddedCounter = 0; //already seen this ward (alreadyadded)
+        currentNeighbourID = Db->picnicTableTable->picnicT_entries[i].neighbhdId;
+        currentNeighbourName = NULL;
+        //neighElementC = Db->neighborhoodTable->neighnourhoodT_ElementCount;
+        //neighEntries = Db->neighborhoodTable->neighbourhoodT_entries;
+        //neighAddedCounter = 0;
 
-         for(k=0; k < diffWardCount; j++){
-            if(strcmp(wardArray[j], currentWard) == 0){
-                wardAddedCounter = 1;
+         for(j=0; j < Db->neighborhoodTable->neighbourhoodT_ElementCount; j++){
+            if(Db->neighborhoodTable->neighbourhoodT_entries[j].code == currentNeighbourID){
+                currentNeighbourName = Db->neighborhoodTable->neighbourhoodT_entries[j].value;
                 break;
             }
          }
 
-         if(wardAddedCounter == 0){
-            wardArray[diffWardCount++] = currentWard;
-         }
+         if(currentNeighbourName == NULL)
+            continue;
+        
+        neighAddedCounter = 0;
+        for(k=0; k < diffNeighCount; k++){
+            if(strcmp(neighArray[k], currentNeighbourName) == 0){
+                neighAddedCounter = 1;
+                 break;
+                }
+            }
 
+        if(neighAddedCounter == 0){
+            neighArray[diffNeighCount++] = currentNeighbourName;
+        }
     }
 
-    for(i=0; i < diffWardCount; i++){
-        for(j=0; j < diffWardCount; j++){
-            if(strcmp(wardArray[i], wardArray[j]) < 0){
-                tmpWard = wardArray[i];
-                wardArray[i] = wardArray[j];
-                wardArray[j] = tmpWard;
+    for(i=0; i < diffNeighCount; i++){
+        for(j=0; j < diffNeighCount; j++){
+            if(strcmp(neighArray[i], neighArray[j]) < 0){
+                tmpNeigh = neighArray[i];
+                neighArray[i] = neighArray[j];
+                neighArray[j] = tmpNeigh;
 
             }
         }
     }
 
-    for(i=0; i < diffWardCount; i++){
-        printf("\n%s\n", wardArray[i]);
-        printf("************************************************\n")
+    for(i=0; i < diffNeighCount; i++){
+        printf("\n%s\n", neighArray[i]);
+        printf("************************************************\n");
 
         for(j=0; j < picnicTCount; j++){
             PicnicTableEntry picTE;
             picTE = Db->picnicTableTable->picnicT_entries[j];
+            char *currentEntryNeighName;
+            currentEntryNeighName = NULL;
 
-            if(strcmp(picTE.ward, wardArray[i]) == 0){
+            for(k=0; k < Db->neighborhoodTable->neighbourhoodT_ElementCount; k++){
+                if(Db->neighborhoodTable->neighbourhoodT_entries[k].code == picTE.neighbhdId){
+                    currentEntryNeighName = Db->neighborhoodTable->neighbourhoodT_entries[k].value;
+                    break;
+                }
+            }
+            if (currentEntryNeighName == NULL)
+                continue;
+
+            if(strcmp(currentEntryNeighName, neighArray[i]) == 0){
                 // Since these are integer values, PicnicTable doesnt store full names like "Wood" - 
                 // It Uses codes / ID's that are associated with certain values that link to the lookup tables (TableType, SurfaceMat, StructMat, Neigh...)
                 // Called Foreign Keys - ID"s that refer to entries in lookup Tables
@@ -180,13 +213,13 @@ void reportByNeighbourhood(){
                 char *tableT; // Lookup Table (Watch Video Once Again To Provide Explaination)
                 char *surfaceMat;// // Lookup Table (Watch Video Once Again To Provide Explaination)
                 char *structuralMat; //Lookup Table (Watch Video Once Again To Provide Explaination)
-                char *neighbourhoodName; // Lookup Table (Watch Video Once Again To Provide Explaination)
+                //char *neighbourhoodName; // Lookup Table (Watch Video Once Again To Provide Explaination)
 
                 // Element Counts for 'For Loop' - just for clairty/visability sake
                 tableTEC = Db->tableTypeTable->tableT_ElementCount;
                 surfaceMEC = Db->surfaceMaterialTable->tableT_ElementCount;
                 structuralEC = Db->structuralMaterialTable->tableT_ElementCount;
-                neighEC = Db->neighborhoodTable->neighbourhoodT_ElementCount;
+                //neighEC = Db->neighborhoodTable->neighbourhoodT_ElementCount;
 
                 for (k=0; k < tableTEC; k++){
                     if(Db->tableTypeTable->tableT_entries[k].code == picTE.tableTypeId){
@@ -209,20 +242,19 @@ void reportByNeighbourhood(){
                     }
                 }
 
-                for(k=0; k < neighEC; k++){
+                /*for(k=0; k < neighEC; k++){
                     if(Db->neighborhoodTable->neighbourhoodT_entries[k].code == picTE.neighbhdId){
                         neighbourhoodName = Db->neighborhoodTable->neighbourhoodT_entries[k].value;
                         break;
                     }
-                }
+                }*/
 
-                printf("%d     %s     %s     %s     %s     %d     %s     %s     %s", picTE.siteId, tableT, surfaceMat, structuralMat, picTE.streetAvenue, picTE.neighbhdId, neighbourhoodName, picTE.latitude, picTE.longitude);
+                printf("%d     %s     %s     %s     %s     %d     %s     %s     %s\n", picTE.siteId, tableT, surfaceMat, structuralMat, picTE.streetAvenue, picTE.neighbhdId, currentEntryNeighName, picTE.latitude, picTE.longitude);
 
             }
         }
     }
     return; 
-    //return; // Return for now - as we're creating empty functions (will be worked on later) for MS1
 }
 
 // this function produces a listing of picnic tables grouped by wards in ascending order
@@ -276,7 +308,7 @@ void reportByWard(){
 
     for(i=0; i < diffWardCount; i++){
         printf("\n%s\n", wardArray[i]);
-        printf("************************************************\n")
+        printf("************************************************\n");
 
         for(j=0; j < picnicTCount; j++){
             PicnicTableEntry picTE;
@@ -326,7 +358,7 @@ void reportByWard(){
                     }
                 }
 
-                printf("%d     %s     %s     %s     %s     %d     %s     %s     %s", picTE.siteId, tableT, surfaceMat, structuralMat, picTE.streetAvenue, picTE.neighbhdId, neighbourhoodName, picTE.latitude, picTE.longitude);
+                printf("%d     %s     %s     %s     %s     %d     %s     %s     %s\n", picTE.siteId, tableT, surfaceMat, structuralMat, picTE.streetAvenue, picTE.neighbhdId, neighbourhoodName, picTE.latitude, picTE.longitude);
 
             }
         }
