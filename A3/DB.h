@@ -5,7 +5,7 @@
  * Please do not modify any code in this file!  We will be testing your code
  * under the assumption that the public interface matches this interface.
  *
- * Author: <TODO: Aksh Chand, Forbes Feild, Vickram Gill, Naval Sachar>
+ * Author: <TODO: Aksh Chand, Forbes Fields, Vickram Gill, Naval Sachar>
  * Lab instructor: <TODO: Dhara Wagh>
  * Lecture instructor: <TODO: Dhara Wagh>
  */
@@ -150,11 +150,18 @@
   */
  void reportByWard();
  
- /*
-  * Frees all dynamic memory associated with each table upon exit. 
-  */
+/*
+ * Frees all dynamic memory associated with each table upon exit.
+ * This function systematically deallocates memory by:
+ * 1. Freeing each string value in all table entries
+ * 2. Freeing the entries arrays for each table
+ * 3. Freeing each table structure (tableTypeTable, surfaceMaterialTable, 
+ *    structuralMaterialTable, neighborhoodTable, picnicTableTable)
+ * 4. Finally freeing the database structure itself and setting it to NULL
+ *
+ * Call this function before program termination to prevent memory leaks.
+ */
  void freeDB();
  
  
- #endif
- 
+ #endif /* DB_H */

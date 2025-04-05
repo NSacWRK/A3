@@ -1,9 +1,11 @@
 /* DB.c
  *
- * TODO: Provide a high-level description of what is contained
- * in this file.
+ * This file contains the implementation of core functions for managing a picnic table database system.
+ * It includes functionality for importing/exporting data from CSV files, counting and editing entries based on various attributes,
+ * sorting, generating reports grouped by neighborhoods or wards, and properly freeing memory used by the database.
+ * All database interactions rely on lookup tables
  *
- * Author: <TODO: Aksh Chand, Forbes Feild, Vickram Gill, Naval Sachar>
+ * Author: <TODO: Aksh Chand, Forbes Fields, Vickram Gill, Naval Sachar>
  * Lab instructor: <TODO: Dhara Wagh>
  * Lecture instructor: <TODO: Dhara Wagh>
  */
