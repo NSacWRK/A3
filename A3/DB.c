@@ -33,7 +33,7 @@ void importDB(char *filename){
     // Where it will show tableTypeTable (id, Type), surfaceMaterialTable (id, surfaceMaterial), structuralMAterialTable(id, struct Material)
     // neighbourhoodTable (Neigh. ID, Neigh Name) - ALL OF LOOKUP TABLES then PicnicTable which holds all of the info stated in the Example PDF provided showing the outputs 
     
-    Database Db = malloc(sizeof(Database));
+    Db = malloc(sizeof(DataBase));
     Db->picnicTableTable = malloc(sizeof(PicnicTable)); // Dynamically Allocate memoery for the entirety of the Database / picnicTable Data Table - contains each entry for each record (line) - in original csv file
     Db->picnicTableTable->picnicT_entries = malloc(sizeof(PicnicTableEntry) * INIT_SIZE); // Dynamically Allocate Memoery of PicnicTable accordingly for EACH entry and size of the Picnic Table
     Db->picnicTableTable->picnicT_ElementCount = 0; // Initalize the current Element Count to 0
@@ -44,13 +44,17 @@ void importDB(char *filename){
             firstFileLine = 0;
             continue;
         }
+
+        // Calaculting if the Table Resizing Is Needed (very similar to Hashatble Implementation from Assignment #2)
+        // Then reallocating the memory from the preiovus sized Table into the newly resized table
+        int capacityPT = Db->picnicTableTable->picnicT_CapacitySize;
+        if (Db->picnicTableTable->picnicT_ElementCount == capacityPT){
+            int newCapacityPT = capacityPT * 2;
+            Db->picnicTableTable->picnicT_entries = realloc(Db->picnicTableTable->picnicT_entries, sizeof(PicnicTableEntry) * newCapacityPT);
+            Db->picnicTableTable->picnicT_CapacitySize = newCapacityPT;
+        }
     }
-
-
-
-
-
-
+    fclose(fp);
     //nav works in this 
     //return; // Return for now - as we're creating empty functions (will be worked on later) for MS1
 }
