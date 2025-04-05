@@ -473,7 +473,105 @@ void reportByWard(){
 
 // This function will free the DB 
 void freeDB(){
-    return; // Return for now - as we're creating empty functions (will be worked on later) for MS1
+
+    int i;
+      
+    //check if database is initialized
+    if(Db == NULL){
+        return;
+    }
+    
+    //free the tableTypeTable
+    if(Db->tableTypeTable != NULL){
+        //free each entry's value (which is dynamically allocated)
+        for(i = 0; i < Db->tableTypeTable->tableT_ElementCount; i++){
+            if(Db->tableTypeTable->tableT_entries[i].value != NULL){
+                free(Db->tableTypeTable->tableT_entries[i].value);
+            }
+        }
+        //free the entries array
+        if(Db->tableTypeTable->tableT_entries != NULL){
+            free(Db->tableTypeTable->tableT_entries);
+        }
+        //free the table itself
+        free(Db->tableTypeTable);
+    }
+    
+    //free the surfaceMaterialTable
+    if(Db->surfaceMaterialTable != NULL){
+        //free each entry's value
+        for(i = 0; i < Db->surfaceMaterialTable->tableT_ElementCount; i++){
+            if(Db->surfaceMaterialTable->tableT_entries[i].value != NULL){
+                free(Db->surfaceMaterialTable->tableT_entries[i].value);
+            }
+        }
+        //free the entries array
+        if(Db->surfaceMaterialTable->tableT_entries != NULL){
+            free(Db->surfaceMaterialTable->tableT_entries);
+        }
+        //free the table itself
+        free(Db->surfaceMaterialTable);
+    }
+    
+    //free the structuralMaterialTable
+    if(Db->structuralMaterialTable != NULL){
+        //Free each entry's value
+        for(i = 0; i < Db->structuralMaterialTable->tableT_ElementCount; i++){
+            if(Db->structuralMaterialTable->tableT_entries[i].value != NULL){
+                free(Db->structuralMaterialTable->tableT_entries[i].value);
+            }
+        }
+        //free the entries array
+        if(Db->structuralMaterialTable->tableT_entries != NULL){
+            free(Db->structuralMaterialTable->tableT_entries);
+        }
+        //free the table itself
+        free(Db->structuralMaterialTable);
+    }
+    
+    //free the neighborhoodTable
+    if(Db->neighborhoodTable != NULL){
+        //free each entry's value
+        for(i = 0; i < Db->neighborhoodTable->neighbourhoodT_ElementCount; i++){
+            if(Db->neighborhoodTable->neighbourhoodT_entries[i].value != NULL){
+                free(Db->neighborhoodTable->neighbourhoodT_entries[i].value);
+            }
+        }
+        //free the entries array
+        if(Db->neighborhoodTable->neighbourhoodT_entries != NULL){
+            free(Db->neighborhoodTable->neighbourhoodT_entries);
+        }
+        //free the table itself
+        free(Db->neighborhoodTable);
+    }
+    
+    //free the picnicTableTable
+    if(Db->picnicTableTable != NULL){
+        //free each entry's dynamically allocated fields
+        for(i = 0; i < Db->picnicTableTable->picnicT_ElementCount; i++){
+            if(Db->picnicTableTable->picnicT_entries[i].streetAvenue != NULL){
+                free(Db->picnicTableTable->picnicT_entries[i].streetAvenue);
+            }
+            if(Db->picnicTableTable->picnicT_entries[i].ward != NULL){
+                free(Db->picnicTableTable->picnicT_entries[i].ward);
+            }
+            if(Db->picnicTableTable->picnicT_entries[i].latitude != NULL){
+                free(Db->picnicTableTable->picnicT_entries[i].latitude);
+            }
+            if(Db->picnicTableTable->picnicT_entries[i].longitude != NULL){
+                free(Db->picnicTableTable->picnicT_entries[i].longitude);
+            }
+        }
+        //free the entries array
+        if(Db->picnicTableTable->picnicT_entries != NULL){
+            free(Db->picnicTableTable->picnicT_entries);
+        }
+        //free the table itself
+        free(Db->picnicTableTable);
+    }
+    //finally, free the database structure itself
+    free(Db);
+    Db = NULL; //set to NULL to prevent use after free
 }
 
 int main() {
