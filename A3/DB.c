@@ -18,52 +18,123 @@
 // Also help from source code for File I/O from Lecture Slides 
 void importDB(char *filename){
     char fileLine[512];
-    // Used as a counter, that will determien if the current line that we're on while parsing through data is the Header Line that
-    // displays the content for each column such as Table, Surface Material, Strctural Material, Longitude, Latitiude, etc...
+
+    // Used as a counter, that will determine if the current line that we're on while parsing through data is the Header Line that
+    // displays the content for each column such as Table, Surface Material, Structural Material, Longitude, Latitude, etc...
     int firstFileLine = 1;
 
-    FILE *fp;
-    fp = fopen(filename, "r");
+    FILE *fp = fopen(filename, "r"); 
     if(fp == NULL){
         printf("error opening File!\n");
         return;
     }
 
-    // Dynamically allocate memeory for our Database corresponding data set information - Used for the PicnicTable Data Table
-    // Where it will show tableTypeTable (id, Type), surfaceMaterialTable (id, surfaceMaterial), structuralMAterialTable(id, struct Material)
+    // Dynamically allocate memory for our Database corresponding data set information - Used for the PicnicTable Data Table
+    // Where it will show tableTypeTable (id, Type), surfaceMaterialTable (id, surfaceMaterial), structuralMaterialTable(id, struct Material)
     // neighbourhoodTable (Neigh. ID, Neigh Name) - ALL OF LOOKUP TABLES then PicnicTable which holds all of the info stated in the Example PDF provided showing the outputs 
-    
     Db = malloc(sizeof(DataBase));
-    Db->picnicTableTable = malloc(sizeof(PicnicTable)); // Dynamically Allocate memoery for the entirety of the Database / picnicTable Data Table - contains each entry for each record (line) - in original csv file
-    Db->picnicTableTable->picnicT_entries = malloc(sizeof(PicnicTableEntry) * INIT_SIZE); // Dynamically Allocate Memoery of PicnicTable accordingly for EACH entry and size of the Picnic Table
-    Db->picnicTableTable->picnicT_ElementCount = 0; // Initalize the current Element Count to 0
+    Db->picnicTableTable = malloc(sizeof(PicnicTable)); // Allocating the memory for the Data Table
+    Db->picnicTableTable->picnicT_entries = malloc(sizeof(PicnicTableEntry) * INIT_SIZE); // Allocating memory for each entry in the Picnic Table
+    Db->picnicTableTable->picnicT_ElementCount = 0; // Initialize the current Element Count to 0
     Db->picnicTableTable->picnicT_CapacitySize = INIT_SIZE; // Since we're using Arrays
 
-    while (fgets(fileLine,sizeof(fileLine),fp)){
+    while (fgets(fileLine, sizeof(fileLine), fp)){
         if(firstFileLine){
             firstFileLine = 0;
             continue;
         }
 
-        // Calaculting if the Table Resizing Is Needed (very similar to Hashatble Implementation from Assignment #2)
-        // Then reallocating the memory from the preiovus sized Table into the newly resized table
+        // Calculating if the Table Resizing Is Needed (very similar to Hashtable Implementation from Assignment #2)
+        // Then reallocating the memory from the previous sized Table into the newly resized table
         int capacityPT = Db->picnicTableTable->picnicT_CapacitySize;
         if (Db->picnicTableTable->picnicT_ElementCount == capacityPT){
             int newCapacityPT = capacityPT * 2;
-            Db->picnicTableTable->picnicT_entries = realloc(Db->picnicTableTable->picnicT_entries, sizeof(PicnicTableEntry) * newCapacityPT);
+            Db->picnicTableTable->picnicT_entries = realloc(
+                Db->picnicTableTable->picnicT_entries, sizeof(PicnicTableEntry) * newCapacityPT);
             Db->picnicTableTable->picnicT_CapacitySize = newCapacityPT;
         }
+
+        // Begin parsing the current line and mapping to struct
+        char *token = strtok(fileLine, ",\n");
+        if(token == NULL) continue;
+
+        PicnicTableEntry newEntry;
+
+        newEntry.siteId = atoi(token); // Id
+
+        token = strtok(NULL, ",\n"); // Table Type
+        newEntry.tableTypeId = lookupOrAddTableType(token);
+
+        token = strtok(NULL, ",\n"); // Surface Material
+        newEntry.surfaceMaterialId = lookupOrAddSurfaceMaterial(token);
+
+        token = strtok(NULL, ",\n"); // Structural Material
+        newEntry.structuralMaterialId = lookupOrAddStructuralMaterial(token);
+
+        token = strtok(NULL, ",\n"); // Street/Avenue
+        strncpy(newEntry.streetAvenue, token, sizeof(newEntry.streetAvenue));
+
+        token = strtok(NULL, ",\n"); // Neighbourhood Id
+        newEntry.neighbhdId = atoi(token);
+
+        token = strtok(NULL, ",\n"); // Neighbourhood Name
+        lookupOrAddNeighbourhood(newEntry.neighbhdId, token); // Store only in lookup
+
+        token = strtok(NULL, ",\n"); // Ward
+        strncpy(newEntry.ward, token, sizeof(newEntry.ward));
+
+        token = strtok(NULL, ",\n"); // Latitude
+        strncpy(newEntry.latitude, token, sizeof(newEntry.latitude));
+
+        token = strtok(NULL, ",\n"); // Longitude
+        strncpy(newEntry.longitude, token, sizeof(newEntry.longitude));
+
+        // Assign unique tableId and store in database
+        newEntry.tableId = Db->picnicTableTable->picnicT_ElementCount + 1;
+
+        // Add the new entry to the array
+        Db->picnicTableTable->picnicT_entries[Db->picnicTableTable->picnicT_ElementCount++] = newEntry;
     }
+
     fclose(fp);
+    printf("Database import complete. %d entries loaded.\n", Db->picnicTableTable->picnicT_ElementCount);
+}
     //nav works in this 
     //return; // Return for now - as we're creating empty functions (will be worked on later) for MS1
-}
+
 
 // This Function takes the name of a .csv file as paramter and creates a .csv file containing the information of the Database
 // (exported .csv file must be exactly the same as the original .csv file from which the Database was created)
 void exportDB(char *filename){
-    //nav works on this 
-    return; // Return for now - as we're creating empty functions (will be worked on later) for MS1
+    FILE *fp = fopen(filename, "w");
+    if(fp == NULL){
+        printf("Error opening file for writing!\n");
+        return;
+    }
+
+    // Write header
+    fprintf(fp, "Id,Table Type,Surface Material,Structural Material,Street / Avenue,Neighbourhood Id,Neighbourhood Name,Ward,Latitude,Longitude\n");
+
+    for(int i = 0; i < Db->picnicTableTable->picnicT_ElementCount; i++){
+        PicnicTableEntry entry = Db->picnicTableTable->picnicT_entries[i];
+
+        // Write each line using lookup functions to get the original strings
+        fprintf(fp, "%d,%s,%s,%s,%s,%d,%s,%s,%s,%s\n",
+            entry.siteId,
+            getTableTypeById(entry.tableTypeId),
+            getSurfaceMaterialById(entry.surfaceMaterialId),
+            getStructuralMaterialById(entry.structuralMaterialId),
+            entry.streetAvenue,
+            entry.neighbhdId,
+            getNeighbourhoodNameById(entry.neighbhdId),
+            entry.ward,
+            entry.latitude,
+            entry.longitude
+        );
+    }
+
+    fclose(fp);
+    printf("Database export complete. File saved as: %s\n", filename);
 }
 
 // Count Entries (Currently Empty Function)
@@ -149,9 +220,45 @@ int countEntries(char *memberName, char * value){
 // Tis function takes the name of a member of the picnicTable entry as an argument and sorts the table in ascending order
 // f the entry values of that member 
 void sortByMember(char *memberName){
-    //this one nav will do 
-    return; // Return for now - as we're creating empty functions (will be worked on later) for MS1
+    int count = Db->picnicTableTable->picnicT_ElementCount;
+
+    for(int i = 0; i < count - 1; i++){
+        for(int j = i + 1; j < count; j++){
+            PicnicTableEntry *a = &Db->picnicTableTable->picnicT_entries[i];
+            PicnicTableEntry *b = &Db->picnicTableTable->picnicT_entries[j];
+
+            int cmp = 0;
+
+            // Numeric fields
+            if(strcmp(memberName, "tableId") == 0)
+                cmp = a->tableId > b->tableId;
+            else if(strcmp(memberName, "siteId") == 0)
+                cmp = a->siteId > b->siteId;
+            else if(strcmp(memberName, "neighbhdId") == 0)
+                cmp = a->neighbhdId > b->neighbhdId;
+
+            // Text fields
+            else if(strcmp(memberName, "streetAvenue") == 0)
+                cmp = strcmp(a->streetAvenue, b->streetAvenue) > 0;
+            else if(strcmp(memberName, "ward") == 0)
+                cmp = strcmp(a->ward, b->ward) > 0;
+            else if(strcmp(memberName, "latitude") == 0)
+                cmp = strcmp(a->latitude, b->latitude) > 0;
+            else if(strcmp(memberName, "longitude") == 0)
+                cmp = strcmp(a->longitude, b->longitude) > 0;
+
+            if(cmp){
+                // Swap entries
+                PicnicTableEntry temp = *a;
+                *a = *b;
+                *b = temp;
+            }
+        }
+    }
+
+    printf("Sorting complete by '%s'.\n", memberName);
 }
+    
 
 // Edit Table Entry Functions 
 // this function takes a tableID, the name of a member of the picnicTable entry and a value for that member as 
