@@ -39,6 +39,13 @@ void importDB(char *filename){
     Db->picnicTableTable->picnicT_ElementCount = 0; // Initalize the current Element Count to 0
     Db->picnicTableTable->picnicT_CapacitySize = INIT_SIZE; // Since we're using Arrays
 
+    while (fgets(fileLine,sizeof(fileLine),fp)){
+        if(firstFileLine){
+            firstFileLine = 0;
+            continue;
+        }
+    }
+
 
 
 
