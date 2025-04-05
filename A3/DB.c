@@ -115,12 +115,85 @@ void sortByMember(char *memberName){
 // Edit Table Entry Functions 
 // this function takes a tableID, the name of a member of the picnicTable entry and a value for that member as 
 //paramters. Fnds the entry which that tableID and changes its memberName value to newValue
+//* Members that can be modified:
+ //*  1- Table Type
+ //*  2- Surface Material
+ //*  3- Structural Material 
+ //* If the new value is not found in the existing tables, this value must be added to the 
+ //* corresponding table.
+ 
 void editTableEntry(int tableID, char *memberName, char *value){
-    return; // Return for now - as we're creating empty functions (will be worked on later) for MS1
+
+    int i, j, picnicTElementC;
+    int newValueInsertIndex;
+    
+    if(Db == NULL || Db->picnicTableTable == NULL){
+        printf("Error - No Database Available, or No Elements Within PicnicTable Available");
+        return 0;
+     }
+
+     picnicTElementC = Db->picnicTableTable->picnicT_ElementCount;
+     for(i=0; i < picnicTElementC; i++){
+        if(Db->picnicTableTable->picnicT_entries[i].tableId == tableID){
+            if(strcmp(memberName, "Surface Material") == 0){
+                for(j=0; j < Db->surfaceMaterialTable->tableT_ElementCount; j++){
+                    if(strcmp(Db->surfaceMaterialTable->tableT_entries[j].value, value) == 0){
+                        Db->picnicTableTable->picnicT_entries[i].surfaceMaterialId = Db->surfaceMaterialTable->tableT_entries[j].code;
+                        return;
+                    }
+                }
+                newValueInsertIndex = Db->surfaceMaterialTable->tableT_ElementCount;
+                Db->surfaceMaterialTable->tableT_entries[newValueInsertIndex].code = newValueInsertIndex;
+                Db->surfaceMaterialTable->tableT_entries[newValueInsertIndex].value = malloc(strlen(value) + 1);
+                strcpy(Db->surfaceMaterialTable->tableT_entries[newValueInsertIndex].value, value);
+                Db->picnicTableTable->picnicT_entries[i].surfaceMaterialId = newValueInsertIndex;
+                Db->surfaceMaterialTable->tableT_ElementCount++;
+                return;
+            }
+
+            else if(strcmp(memberName, "Structural Material") == 0){
+                for(j=0; j < Db->structuralMaterialTable->tableT_ElementCount; j++){
+                    if (strcmp(Db->structuralMaterialTable->tableT_entries[j].value, value) == 0){
+                        Db->picnicTableTable->picnicT_entries[i].structuralMaterialId = Db->structuralMaterialTable->tableT_entries[j].code;
+                        return;
+                    }
+                }
+                newValueInsertIndex = Db->structuralMaterialTable->tableT_ElementCount;
+                Db->structuralMaterialTable->tableT_entries[newValueInsertIndex].code = newValueInsertIndex;
+                Db->structuralMaterialTable->tableT_entries[newValueInsertIndex].value = malloc(strlen(value) + 1);
+                strcpy(Db->structuralMaterialTable->tableT_entries[newValueInsertIndex].value, value);
+                Db->picnicTableTable->picnicT_entries[i].structuralMaterialId = newValueInsertIndex;
+                Db->structuralMaterialTable->tableT_ElementCount++;
+                return;
+            }
+
+            else if(strcmp(memberName, "Table Type") == 0){
+                for(j=0; j < Db->tableTypeTable->tableT_ElementCount; j++){
+                    if (strcmp(Db->tableTypeTable->tableT_entries[j].value, value) == 0){
+                        Db->picnicTableTable->picnicT_entries[i].tableTypeId = Db->tableTypeTable->tableT_entries[j].code;
+                        return;
+                    }
+                }
+                newValueInsertIndex = Db->tableTypeTable->tableT_ElementCount;
+                Db->tableTypeTable->tableT_entries[newValueInsertIndex].code = newValueInsertIndex;
+                Db->tableTypeTable->tableT_entries[newValueInsertIndex].value = malloc(strlen(value) + 1);
+                strcpy(Db->tableTypeTable->tableT_entries[newValueInsertIndex].value, value);
+                Db->picnicTableTable->picnicT_entries[i].tableTypeId = newValueInsertIndex;
+                Db->tableTypeTable->tableT_ElementCount++;
+                return;
+            }
+
+            else{
+                printf("Error - Member Name Chosen Not Valid.\n");
+                return;
+            }
+        }
+     }
+     printf("Error - Invalid Table ID\n");
+     return;
 }
 
 // this function produces a listing of picnic tables grouped by neighbourhoods in ascending alphabetical order
-
 // Similarly to ReportByWard - the same format and approach was used (as they're quite similar in functionality - just one sorts according to 
 // ward and the other according to Neighbourhood - will still using the Lookup Table (using the NeighbourhoodId - neighID - to access the certain 
 // elements))
@@ -135,8 +208,7 @@ void reportByNeighbourhood(){
     char *currentNeighbourName, *tmpNeigh;
     int neighAddedCounter, currentNeighbourID;
     int picnicTCount, diffNeighCount, tableTEC, surfaceMEC, structuralEC, neighEC;
-    //currentNeighbourName = NULL;
-
+    
     picnicTCount = Db->picnicTableTable->picnicT_ElementCount;
     diffNeighCount = 0; // distinct / different wards
 
@@ -144,14 +216,10 @@ void reportByNeighbourhood(){
         printf("Error - No Database Available, or No Elements Within PicnicTable Available");
         return 0;
     }
-
     for(i=0; i < picnicTCount; i++){
         currentNeighbourID = Db->picnicTableTable->picnicT_entries[i].neighbhdId;
         currentNeighbourName = NULL;
-        //neighElementC = Db->neighborhoodTable->neighnourhoodT_ElementCount;
-        //neighEntries = Db->neighborhoodTable->neighbourhoodT_entries;
-        //neighAddedCounter = 0;
-
+       
          for(j=0; j < Db->neighborhoodTable->neighbourhoodT_ElementCount; j++){
             if(Db->neighborhoodTable->neighbourhoodT_entries[j].code == currentNeighbourID){
                 currentNeighbourName = Db->neighborhoodTable->neighbourhoodT_entries[j].value;
@@ -262,7 +330,7 @@ void reportByNeighbourhood(){
 // Resources Used for Help:
     // - https://stackoverflow.com/questions/40033310/sorting-a-list-of-strings-in-alphabetical-order-c
     // - https://www.w3schools.com/dsa/dsa_algo_bubblesort.php
-    
+
 void reportByWard(){
     int i, j, k;
     char *wardArray[64];
@@ -336,28 +404,24 @@ void reportByWard(){
                         break;
                     }
                 }
-
                 for(k=0; k < surfaceMEC; k++){
                     if(Db->surfaceMaterialTable->tableT_entries[k].code == picTE.surfaceMaterialId){
                         surfaceMat= Db->surfaceMaterialTable->tableT_entries[k].value;
                         break;
                     }
                 }
-
                 for(k=0; k < structuralEC; k++){
                     if(Db->structuralMaterialTable->tableT_entries[k].code == picTE.structuralMaterialId){
                         structuralMat = Db->structuralMaterialTable->tableT_entries[k].value;
                         break;
                     }
                 }
-
                 for(k=0; k < neighEC; k++){
                     if(Db->neighborhoodTable->neighbourhoodT_entries[k].code == picTE.neighbhdId){
                         neighbourhoodName = Db->neighborhoodTable->neighbourhoodT_entries[k].value;
                         break;
                     }
                 }
-
                 printf("%d     %s     %s     %s     %s     %d     %s     %s     %s\n", picTE.siteId, tableT, surfaceMat, structuralMat, picTE.streetAvenue, picTE.neighbhdId, neighbourhoodName, picTE.latitude, picTE.longitude);
 
             }
