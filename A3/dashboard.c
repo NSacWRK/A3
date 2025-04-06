@@ -9,18 +9,30 @@
  * Lecture instructor: <TODO: Dhara Wagh>
 */
 
-//You may include other original headers as you see fit
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "DB.h"
 
+// defined max lengths for consistency
+#define FILENAME_MAX 256
+#define INPUT_MAX 100
+#define MEMBER_NAME_MAX 50
+
+// retrieve input from user 
+void getInput(const char *prompt, char *buffer, size_t size) {
+    printf("%s", prompt);
+    if (fgets(buffer, size, stdin)) {
+        buffer[strcspn(buffer, "\n")] = '\0';
+    }
+}
+
 int main(int argc, char *argv[]) {
     int dbInitialized = 0;
     int choice;
-    char filename[100];
-    char memberName[50];
-    char value[100];
+    char filename[FILENAME_MAX];
+    char memberName[MEMBER_NAME_MAX];
+    char value[INPUT_MAX];
     int tableId;
 
     while (1) {
@@ -28,93 +40,90 @@ int main(int argc, char *argv[]) {
         printf("1. Import Database\n");
         printf("2. Export Database\n");
         printf("3. Count Entries\n");
-        printf("4. Sort By\n");
-        printf("5. Edit Entry\n");
-        printf("6. Report (By Ward or Neighbourhood)\n");
+        printf("4. Sort Tables\n");
+        printf("5. Edit Table Entry\n");
+        printf("6. Generate Reports\n");
         printf("7. Exit\n");
-        printf("Enter your choice: ");
-        scanf("%d", &choice);
-        getchar(); // Clear newline from input buffer
+        
+        printf("Enter your choice (1-7): ");
+        if (scanf("%d", &choice) != 1) {
+            printf("Invalid input. Please enter a number.\n");
+            while (getchar() != '\n');
+            continue;
+        }
+        getchar();
 
         if (choice != 1 && !dbInitialized) {
-            printf("Please import the database first before using this option.\n");
+            printf("Please import the database first (Option 1).\n");
             continue;
         }
 
         switch (choice) {
             case 1:
-                printf("Enter CSV filename to import: ");
-                fgets(filename, sizeof(filename), stdin);
-                filename[strcspn(filename, "\n")] = 0;
+                getInput("Enter CSV filename to import: ", filename, sizeof(filename));
+                if (strlen(filename) == 0) {
+                    printf("Filename cannot be empty.\n");
+                    break;
+                }
                 importDB(filename);
                 dbInitialized = 1;
                 break;
 
             case 2:
-                printf("Enter filename to export to: ");
-                fgets(filename, sizeof(filename), stdin);
-                filename[strcspn(filename, "\n")] = 0;
+                getInput("Enter filename to export to: ", filename, sizeof(filename));
                 exportDB(filename);
                 break;
 
             case 3:
-                printf("Enter member name to count (e.g., ward, tableId, streetAvenue): ");
-                fgets(memberName, sizeof(memberName), stdin);
-                memberName[strcspn(memberName, "\n")] = 0;
-
-                printf("Enter value to count: ");
-                fgets(value, sizeof(value), stdin);
-                value[strcspn(value, "\n")] = 0;
-
-                printf("Found %d entries with %s = %s\n", countEntries(memberName, value), memberName, value);
+                getInput("Enter member name to count: ", memberName, sizeof(memberName));
+                getInput("Enter value to count: ", value, sizeof(value));
+                printf("Found %d entries with %s = %s\n", 
+                      countEntries(memberName, value), memberName, value);
                 break;
 
             case 4:
-                printf("Enter member name to sort by (e.g., ward, tableId, streetAvenue): ");
-                fgets(memberName, sizeof(memberName), stdin);
-                memberName[strcspn(memberName, "\n")] = 0;
-
+                getInput("Enter member name to sort by: ", memberName, sizeof(memberName));
                 sortByMember(memberName);
                 break;
 
             case 5:
                 printf("Enter tableId to edit: ");
-                scanf("%d", &tableId);
+                if (scanf("%d", &tableId) != 1) {
+                    printf("Invalid table ID.\n");
+                    while (getchar() != '\n');
+                    break;
+                }
                 getchar();
-
-                printf("Enter member name to edit: ");
-                fgets(memberName, sizeof(memberName), stdin);
-                memberName[strcspn(memberName, "\n")] = 0;
-
-                printf("Enter new value: ");
-                fgets(value, sizeof(value), stdin);
-                value[strcspn(value, "\n")] = 0;
-
+                getInput("Enter member name to edit: ", memberName, sizeof(memberName));
+                getInput("Enter new value: ", value, sizeof(value));
                 editTableEntry(tableId, memberName, value);
                 break;
 
             case 6:
-                printf("Report by (1 = Ward, 2 = Neighbourhood): ");
+                printf("\n== Report Options ==\n");
+                printf("1. By Ward\n2. By Neighbourhood\n3. Back\n");
+                printf("Enter report type: ");
                 int reportType;
-                scanf("%d", &reportType);
+                if (scanf("%d", &reportType) != 1) {
+                    printf("Invalid input.\n");
+                    break;
+                }
                 getchar();
-
-                if (reportType == 1)
-                    reportByWard();
-                else if (reportType == 2)
-                    reportByNeighbourhood();
-                else
-                    printf("Invalid report type.\n");
+                switch (reportType) {
+                    case 1: reportByWard(); break;
+                    case 2: reportByNeighbourhood(); break;
+                    default: printf("Returning to main menu.\n");
+                }
                 break;
 
             case 7:
-                printf("Exiting. Goodbye!\n");
+                if (dbInitialized) freeDB();
+                printf("Goodbye!\n");
                 exit(0);
 
             default:
-                printf("Invalid choice. Please try again.\n");
+                printf("Invalid choice. Please enter 1-7.\n");
         }
     }
-
     return 0;
-};
+}
