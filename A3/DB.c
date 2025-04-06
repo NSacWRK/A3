@@ -10,6 +10,9 @@
 
 #include "DB.h"       /* Import the public database header. */
 #include "DB_impl.h"  /* Import the private database header */
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 // This function will take the name of a .csv file as parameter and creates and populates the Database
 // with the correpsonding data set information
@@ -160,7 +163,7 @@ int countEntries(char *memberName, char * value){
 
     if(Db == NULL || Db->picnicTableTable == NULL){
         printf("Error - No Database Available, or No Elements Within PicnicTable Available");
-        return 0;
+        return;
     }
 
     // Fo rloop that will iterate throguh each entry within the picnicTableTable 
@@ -298,7 +301,7 @@ void editTableEntry(int tableID, char *memberName, char *value){
 
     if(Db == NULL || Db->picnicTableTable == NULL){
         printf("Error - No Database Available, or No Elements Within PicnicTable Available");
-        return 0;
+        return;
      }
 
      picnicTElementC = Db->picnicTableTable->picnicT_ElementCount; // This will get and store the total number of entries/element count in the picnicTable Table
@@ -418,7 +421,7 @@ void reportByNeighbourhood(){
 
     if(Db == NULL || Db->picnicTableTable == NULL){
         printf("Error - No Database Available, or No Elements Within PicnicTable Available");
-        return 0;
+        return;
     }
     // For loop that will iterate through all the picnic tbales and will get the current neighbhd's ID's at that given index position in the iteration
     for(i=0; i < picnicTCount; i++){
@@ -567,7 +570,7 @@ void reportByWard(){
     // as we cant count entries using the Tables and Db that are empty / NULL
     if(Db == NULL || Db->picnicTableTable == NULL){
         printf("Error - No Database Available, or No Elements Within PicnicTable Available");
-        return 0;
+        return;
     }
 
     // For loop that will iterate through all of the picnicTable entries - and will extract the ward for each table entry
@@ -625,7 +628,7 @@ void reportByWard(){
                 tableTEC = Db->tableTypeTable->tableT_ElementCount;
                 surfaceMEC = Db->surfaceMaterialTable->tableT_ElementCount;
                 structuralEC = Db->structuralMaterialTable->tableT_ElementCount;
-                neighEC = Db->neighborhoodTable->neighbourhoodT_ElementCount
+                neighEC = Db->neighborhoodTable->neighbourhoodT_ElementCount;
 
                 // Similiary to the reportByNeighbourhood, this will do the same where:
                 // For loop that will find the ward for the table type 
