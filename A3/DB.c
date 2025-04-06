@@ -146,43 +146,57 @@ void exportDB(char *filename){
  *   2- Surface Material
  *   3- Structural Material
  *   4 - Neghborhood ID
- *   4- Neighborhood Name
- *   5- Ward
+ *   5- Neighborhood Name
+ *   6- Ward
  */
 int countEntries(char *memberName, char * value){
     //return 0; // Return for now - as we're creating empty functions (will be worked on later) for MS1
-    int i,j,nbhdID,entryCount;
-    entryCount = 0;
+    int i,j,nbhdID,entryCount; // Initalize i, j, nbhdID, entryCount (int) - that will be used later on in/for the for loops tec
+    entryCount = 0; // initalize the entryCount to 0 - this variable will keep track of how many matched entries we've found - which we currently intialized at 0
+    // as initally there are zero matched entries 
+
+    // Error Check - this will simply make sure that our picnicTableTable and/or Db are NULL - which is it is - will return NULL 
+    // as we cant count entries using the Tables and Db that are empty / NULL
 
     if(Db == NULL || Db->picnicTableTable == NULL){
         printf("Error - No Database Available, or No Elements Within PicnicTable Available");
         return 0;
     }
 
+    // Fo rloop that will iterate throguh each entry within the picnicTableTable 
     for (i = 0; i < Db->picnicTableTable->picnicT_ElementCount; i++){
-        PicnicTableEntry picTEntry;
-        picTEntry = Db->picnicTableTable->picnicT_entries[i];
+        PicnicTableEntry picTEntry; // We first initalize a variable (calling the struct PicnicTableEntry) - which will give us access to the feilds for each picnicTable Table entry 
+        // but in this case we want to get the current picnic table entry which we are checking
+        picTEntry = Db->picnicTableTable->picnicT_entries[i]; // set the entry variable for the picnic Table current entry position/index we're at
 
-        // #1 Table Type (UNDER TABLE STRUCT - (Look at CMPT_201_Database_Description PDF - Table Relationships))
-        if(strcmp(memberName, "Table Type") == 0){
+        // #1 Table Type (UNDER TABLE STRUCT / LOOKUP - (Look at CMPT_201_Database_Description PDF - Table Relationships))
+        if(strcmp(memberName, "Table Type") == 0){ // Using the strcmp function, this will check to see if we're searching/checking for the member "Table Type"
+            // For loop that will iterate through all the entries in the Table Type lookup Table 
             for(j=0; j < Db->tableTypeTable->tableT_ElementCount; j++){
+                // If statement that will check to see if the code in the lookup macthes the picnic table's tapeTypeId and the and the value matches for the 
+                // the value that we're looking for - if this is VALID and MATCHes - we increment the entryCount by 1 
                 if(Db->tableTypeTable->tableT_entries[j].code == picTEntry.tableTypeId && strcmp(Db->tableTypeTable->tableT_entries[j].value, value) == 0){
-                    entryCount++;
+                    entryCount++; // Increment count
                 }
                 
             }
         }
-        // #2) Surface Material (UNDER TABLE STRUCT -(Look at CMPT_201_Database_Description PDF - Table Relationships))
-        else if (strcmp(memberName, "Surface Material") == 0){
-            for(j=0; j < Db->surfaceMaterialTable->tableT_ElementCount; j++){
+        // The same implementation goes for the rest of the members we're searching
+        // #2) Surface Material (UNDER TABLE STRUCT / LOOKUP -(Look at CMPT_201_Database_Description PDF - Table Relationships))
+        else if (strcmp(memberName, "Surface Material") == 0){ // Using the strcmp function, this will check to see if we're searching/checking for the member "Surface Material"
+            for(j=0; j < Db->surfaceMaterialTable->tableT_ElementCount; j++){  // For loop that will iterate through all the entries in the Table Type lookup Table
+                 // If statement that will check to see if the code in the lookup macthes the picnic table's tapeTypeId and the and the value matches for the 
+                // the value that we're looking for - if this is VALID and MATCHes - we increment the entryCount by 1
                 if(Db->surfaceMaterialTable->tableT_entries[j].code == picTEntry.surfaceMaterialId && strcmp(Db->surfaceMaterialTable->tableT_entries[j].value, value) == 0){
-                    entryCount++;
+                    entryCount++; // Increment count 
                 }
             }
         }
-        // #3) Structural Material (UNDER TABLE STRUCT - (Look at CMPT_201_Database_Description PDF - Table Relationships))
-        else if (strcmp(memberName, "Structural Material") == 0){
-            for(j=0; j < Db->structuralMaterialTable->tableT_ElementCount; j++){
+        // #3) Structural Material (UNDER TABLE STRUCT / LOOKUP- (Look at CMPT_201_Database_Description PDF - Table Relationships))
+        else if (strcmp(memberName, "Structural Material") == 0){  // Using the strcmp function, this will check to see if we're searching/checking for the member "Structural Material"
+            for(j=0; j < Db->structuralMaterialTable->tableT_ElementCount; j++){ // For loop that will iterate through all the entries in the Table Type lookup Table
+                // If statement that will check to see if the code in the lookup macthes the picnic table's tapeTypeId and the and the value matches for the 
+                // the value that we're looking for - if this is VALID and MATCHes - we increment the entryCount by 1
                 if(Db->structuralMaterialTable->tableT_entries[j].code == picTEntry.structuralMaterialId && strcmp(Db->structuralMaterialTable->tableT_entries[j].value, value) == 0){
                     entryCount++;
                 }
@@ -190,30 +204,34 @@ int countEntries(char *memberName, char * value){
         }
 
         // # 4) Neighbourhood ID (Look at CMPT_201_Database_Description PDF - Table Relationships)
-        else if (strcmp(memberName, "Neighbourhood Id") == 0){
-            nbhdID = atoi(value);
-            if(picTEntry.neighbhdId == nbhdID){
-                entryCount++;
+        else if (strcmp(memberName, "Neighbourhood Id") == 0){ // Using the strcmp function, this will check to see if we're searching/checking for the member "Neighbourhood ID"
+            // COnvert the value we're looking/searching for in this given memberName - but since value is a char, and in out struct neigh. ID is an Int
+            // We would have to use the atoi function 0 which will convert the char/string into an integer to allow us to search for that given value (integer) in this memberName
+            nbhdID = atoi(value); 
+            if(picTEntry.neighbhdId == nbhdID){ // Comparing the integer and compare it / seee if it matches the picnic entry's neighbourhood ID (neighbhdId)
+                entryCount++;// if it matches, increment the counter
             }
         }
 
         // #5) Neighbourhood Name (NEIGHBOURHOOD STRUCT - (Look at CMPT_201_Database_Description PDF - Table Relationships))
-        else if (strcmp(memberName, "Neighbourhood Name") == 0){
+        else if (strcmp(memberName, "Neighbourhood Name") == 0){ // Using the strcmp function, this will check to see if we're searching/checking for the member "Neighbourhood Name"
             for(j=0; j < Db->neighborhoodTable->neighbourhoodT_ElementCount; j++){
+                // If statement that will check to see if the neighbhdId and the code from the neighbourhood LookupTable match AND if the values also match accordingly, we
+                // increment the counter 
                 if(Db->neighborhoodTable->neighbourhoodT_entries[j].code == picTEntry.neighbhdId && strcmp(Db->neighborhoodTable->neighbourhoodT_entries[j].value, value) == 0){
-                    entryCount++;
+                    entryCount++; // Increment the counter 
                 }
             }
         }
 
         // #6) Ward (Within PicnicTable / picTEntry directly)
-        else if (strcmp(memberName, "Ward") == 0){
-            if(strcmp(picTEntry.ward, value) == 0){
+        else if (strcmp(memberName, "Ward") == 0){ // Using the strcmp function, this will check to see if we're searching/checking for the member "Ward"
+            if(strcmp(picTEntry.ward, value) == 0){ // If statements to check if the values match, if they match increment the counter
                 entryCount++;
             }
         }
     }
-    return entryCount;
+    return entryCount; // return the final result 
 }
 
 // SortByMember Function
@@ -272,71 +290,98 @@ void sortByMember(char *memberName){
  
 void editTableEntry(int tableID, char *memberName, char *value){
 
-    int i, j, picnicTElementC;
-    int newValueInsertIndex;
+    int i, j, picnicTElementC; // Initalize the variables i , j , picnicTElementC (ints) => i and j will both be used for loops, picnicTElementC is used to count the number of picnic table entries
+    int newValueInsertIndex; // initalize the variable newValueInsertIndex (int)
     
+    // Error Check - this will simply make sure that our picnicTableTable and/or Db are NULL - which is it is - will return NULL 
+    // as we cant count entries using the Tables and Db that are empty / NULL
+
     if(Db == NULL || Db->picnicTableTable == NULL){
         printf("Error - No Database Available, or No Elements Within PicnicTable Available");
         return 0;
      }
 
-     picnicTElementC = Db->picnicTableTable->picnicT_ElementCount;
+     picnicTElementC = Db->picnicTableTable->picnicT_ElementCount; // This will get and store the total number of entries/element count in the picnicTable Table
+     // This for loop will iterate through each of the entries in the table
      for(i=0; i < picnicTElementC; i++){
+        // First If Statement that will check to see if the current entry's tableId matches the tableId passed in the paramter / the one we want to edit/update
         if(Db->picnicTableTable->picnicT_entries[i].tableId == tableID){
+            // Second if statement that will check to see if the member name (passed in the paramater) is Surface Material - which is the 
+            //member that we want to update 
             if(strcmp(memberName, "Surface Material") == 0){
+                // Nested for Loop that will check to see and will iterate through the surface material lookup table and see if the value exists
                 for(j=0; j < Db->surfaceMaterialTable->tableT_ElementCount; j++){
+                    // If statement that IF there exists a value, we set the surfaceMaterialId in the picnic entry to the code of the macthed value 
                     if(strcmp(Db->surfaceMaterialTable->tableT_entries[j].value, value) == 0){
                         Db->picnicTableTable->picnicT_entries[i].surfaceMaterialId = Db->surfaceMaterialTable->tableT_entries[j].code;
-                        return;
+                        return; // return 
                     }
                 }
-                newValueInsertIndex = Db->surfaceMaterialTable->tableT_ElementCount;
-                Db->surfaceMaterialTable->tableT_entries[newValueInsertIndex].code = newValueInsertIndex;
-                Db->surfaceMaterialTable->tableT_entries[newValueInsertIndex].value = malloc(strlen(value) + 1);
-                strcpy(Db->surfaceMaterialTable->tableT_entries[newValueInsertIndex].value, value);
-                Db->picnicTableTable->picnicT_entries[i].surfaceMaterialId = newValueInsertIndex;
-                Db->surfaceMaterialTable->tableT_ElementCount++;
+                // Otherwise as stated in Db.h " If the new value is not found in the existing tables, this value must be added to the  corresponding table."
+                // which is what we'll be doing here 
+                newValueInsertIndex = Db->surfaceMaterialTable->tableT_ElementCount; // First - Calaculate the Index where we want to insert/update or where the new value will go
+                Db->surfaceMaterialTable->tableT_entries[newValueInsertIndex].code = newValueInsertIndex; // Second - we will set a new code (foreign key or ID) - using the index 
+                Db->surfaceMaterialTable->tableT_entries[newValueInsertIndex].value = malloc(strlen(value) + 1); // Third - we will dynamically allocate memory for the newly addded value, and then copy the value
+                strcpy(Db->surfaceMaterialTable->tableT_entries[newValueInsertIndex].value, value); // Copy the new value
+                Db->picnicTableTable->picnicT_entries[i].surfaceMaterialId = newValueInsertIndex; // Fourth - We will assign the new ID to the picnic entry and increase the element count (as we've added a new value - increasing the count)
+                Db->surfaceMaterialTable->tableT_ElementCount++; // Increase Element Count
                 return;
             }
 
+            // Similarly to the surface Material, this will do the same but for Structural Material
+            // else if statement that will check to see if the member name (passed in the paramater) is Structural Material - which is the 
+            // member that we want to update 
             else if(strcmp(memberName, "Structural Material") == 0){
+                //for Loop that will check to see and will iterate through the surface material lookup table and see if the value exists
                 for(j=0; j < Db->structuralMaterialTable->tableT_ElementCount; j++){
+                    // If statement that IF there exists a value, we set the structuralMaterialId in the picnic entry to the code of the macthed value 
                     if (strcmp(Db->structuralMaterialTable->tableT_entries[j].value, value) == 0){
                         Db->picnicTableTable->picnicT_entries[i].structuralMaterialId = Db->structuralMaterialTable->tableT_entries[j].code;
-                        return;
+                        return; // return
                     }
                 }
-                newValueInsertIndex = Db->structuralMaterialTable->tableT_ElementCount;
-                Db->structuralMaterialTable->tableT_entries[newValueInsertIndex].code = newValueInsertIndex;
-                Db->structuralMaterialTable->tableT_entries[newValueInsertIndex].value = malloc(strlen(value) + 1);
-                strcpy(Db->structuralMaterialTable->tableT_entries[newValueInsertIndex].value, value);
-                Db->picnicTableTable->picnicT_entries[i].structuralMaterialId = newValueInsertIndex;
-                Db->structuralMaterialTable->tableT_ElementCount++;
+                // Otherwise as stated in Db.h " If the new value is not found in the existing tables, this value must be added to the  corresponding table."
+                // which is what we'll be doing here 
+                newValueInsertIndex = Db->structuralMaterialTable->tableT_ElementCount;// First - Calaculate the Index where we want to insert/update or where the new value will go
+                Db->structuralMaterialTable->tableT_entries[newValueInsertIndex].code = newValueInsertIndex; // Second - we will set a new code (foreign key or ID) - using the index 
+                Db->structuralMaterialTable->tableT_entries[newValueInsertIndex].value = malloc(strlen(value) + 1); // Third - we will dynamically allocate memory for the newly addded value, and then copy the value
+                strcpy(Db->structuralMaterialTable->tableT_entries[newValueInsertIndex].value, value); // Copy the new value
+                Db->picnicTableTable->picnicT_entries[i].structuralMaterialId = newValueInsertIndex; // Fourth - We will assign the new ID to the picnic entry and increase the element count (as we've added a new value - increasing the count)
+                Db->structuralMaterialTable->tableT_ElementCount++; // Increase Element Count
                 return;
             }
+
+            // Similarly to the structural Material, this will do the same but for Table Type
+            // else if statement that will check to see if the member name (passed in the paramater) is Structural Material - which is the 
+            // member that we want to update 
 
             else if(strcmp(memberName, "Table Type") == 0){
+                //for Loop that will check to see and will iterate through the surface material lookup table and see if the value exists
                 for(j=0; j < Db->tableTypeTable->tableT_ElementCount; j++){
+                    // If statement that IF there exists a value, we set the tableTypeId in the picnic entry to the code of the macthed value 
                     if (strcmp(Db->tableTypeTable->tableT_entries[j].value, value) == 0){
                         Db->picnicTableTable->picnicT_entries[i].tableTypeId = Db->tableTypeTable->tableT_entries[j].code;
-                        return;
+                        return; // return
                     }
                 }
-                newValueInsertIndex = Db->tableTypeTable->tableT_ElementCount;
-                Db->tableTypeTable->tableT_entries[newValueInsertIndex].code = newValueInsertIndex;
-                Db->tableTypeTable->tableT_entries[newValueInsertIndex].value = malloc(strlen(value) + 1);
-                strcpy(Db->tableTypeTable->tableT_entries[newValueInsertIndex].value, value);
-                Db->picnicTableTable->picnicT_entries[i].tableTypeId = newValueInsertIndex;
-                Db->tableTypeTable->tableT_ElementCount++;
+                // Otherwise as stated in Db.h " If the new value is not found in the existing tables, this value must be added to the  corresponding table."
+                // which is what we'll be doing here 
+                newValueInsertIndex = Db->tableTypeTable->tableT_ElementCount; // First - Calaculate the Index where we want to insert/update or where the new value will go
+                Db->tableTypeTable->tableT_entries[newValueInsertIndex].code = newValueInsertIndex; // Second - we will set a new code (foreign key or ID) - using the index 
+                Db->tableTypeTable->tableT_entries[newValueInsertIndex].value = malloc(strlen(value) + 1); // Third - we will dynamically allocate memory for the newly addded value, and then copy the value
+                strcpy(Db->tableTypeTable->tableT_entries[newValueInsertIndex].value, value); // Copy the new value
+                Db->picnicTableTable->picnicT_entries[i].tableTypeId = newValueInsertIndex;// Fourth - We will assign the new ID to the picnic entry and increase the element count (as we've added a new value - increasing the count)
+                Db->tableTypeTable->tableT_ElementCount++; // Increase Element Count
                 return;
             }
-
+            // Else - return an Error Message indicating that Chosen Member Name is not Valid
             else{
                 printf("Error - Member Name Chosen Not Valid.\n");
                 return;
             }
         }
      }
+     // If there is no matching table ID - we will throw and return an error message as well
      printf("Error - Invalid Table ID\n");
      return;
 }
@@ -351,46 +396,62 @@ void editTableEntry(int tableID, char *memberName, char *value){
     
 
 void reportByNeighbourhood(){
-    int i, j, k;
-    char *neighArray[64];
-    char *currentNeighbourName, *tmpNeigh;
+    int i, j, k; // Initalize variables i, j, k (ints) - which will be used in our Loops (mainly nested for loops)
+    char *neighArray[64]; // initalize a string/char array that is storeed as a pointer called neighArray - which stores up to 64 strings/chars
+    char *currentNeighbourName, *tmpNeigh; // Initalize variable currentNeighbourName, tmpNeigh, which are chars and pointers 
+    // currentNeighourName will store the name of current neighbourhood name while we're iterating in our for loops 
+    // tmpNeigh - will be used whenever we're rearranging for alphabetically sort the names (used for swapping)
     int neighAddedCounter, currentNeighbourID;
     int picnicTCount, diffNeighCount, tableTEC, surfaceMEC, structuralEC, neighEC;
+
+    // Initalize al the int vars listed above ^, where neighAddedCounter will check to see if the neighbourhood is whithint he Array,
+    // currentNeighbourID will store the ID of the current picnic tables neighbourhood. picnicTCount is the total numeber of entries and 
+    // diffneighCount is how many different neighbourhoods we've found.
+
+    //tableTEC, surfaceMEC, structuralEC, neighEC, are variables that will store their respectd element count (just used for simpliciyt and visual sake later on)
     
-    picnicTCount = Db->picnicTableTable->picnicT_ElementCount;
-    diffNeighCount = 0; // distinct / different wards
+    picnicTCount = Db->picnicTableTable->picnicT_ElementCount; // Store the number of picnic tables 
+    diffNeighCount = 0; // distinct / different wards (set to 0)
+
+    // Error Check - this will simply make sure that our picnicTableTable and/or Db are NULL - which is it is - will return NULL 
+    // as we cant count entries using the Tables and Db that are empty / NULL
 
     if(Db == NULL || Db->picnicTableTable == NULL){
         printf("Error - No Database Available, or No Elements Within PicnicTable Available");
         return 0;
     }
+    // For loop that will iterate through all the picnic tbales and will get the current neighbhd's ID's at that given index position in the iteration
     for(i=0; i < picnicTCount; i++){
         currentNeighbourID = Db->picnicTableTable->picnicT_entries[i].neighbhdId;
         currentNeighbourName = NULL;
-       
+
+        // For loop that will iterate, and lookup the neighbourhood name from the neighbourhood look up table using the code
          for(j=0; j < Db->neighborhoodTable->neighbourhoodT_ElementCount; j++){
+            // If statement that checks to see that if theres a match (equal each other) - ID and the currrentNeighbourID
             if(Db->neighborhoodTable->neighbourhoodT_entries[j].code == currentNeighbourID){
-                currentNeighbourName = Db->neighborhoodTable->neighbourhoodT_entries[j].value;
+                currentNeighbourName = Db->neighborhoodTable->neighbourhoodT_entries[j].value; // Set the neighborhood name from the associated value
                 break;
             }
          }
-
+         // If statement that checks to see if there was no name / entry found (IS NULL) - skip or continue
          if(currentNeighbourName == NULL)
             continue;
         
-        neighAddedCounter = 0;
-        for(k=0; k < diffNeighCount; k++){
-            if(strcmp(neighArray[k], currentNeighbourName) == 0){
-                neighAddedCounter = 1;
+
+        neighAddedCounter = 0; // THis is a counter, that is set to 0, but while we're iterating through the neighbourrds and find if neighbouhrood name is already in our neighArray, we set the Flag to 0 
+        for(k=0; k < diffNeighCount; k++){ // for loop that will check to see if the name is already in the neighArray
+            if(strcmp(neighArray[k], currentNeighbourName) == 0){ // if the Names Match
+                neighAddedCounter = 1; // Set the flag / counter to 1 indicating that it already exist's within teh neighArray
                  break;
                 }
             }
 
+        // if the Name does not exist within the array, add it to the array 
         if(neighAddedCounter == 0){
             neighArray[diffNeighCount++] = currentNeighbourName;
         }
     }
-
+    // This nested for loop, will help rearrange / sort the Neighbourhoods alphabteically
     for(i=0; i < diffNeighCount; i++){
         for(j=0; j < diffNeighCount; j++){
             if(strcmp(neighArray[i], neighArray[j]) < 0){
@@ -401,17 +462,18 @@ void reportByNeighbourhood(){
             }
         }
     }
-
+    // For loop that will iterate through the neighArray (holds all the neighbourhoods) and print thm 
     for(i=0; i < diffNeighCount; i++){
         printf("\n%s\n", neighArray[i]);
         printf("************************************************\n");
 
+        // For loop that will iterate and go through eahc picnic table, and match it with the current neighbourhood
         for(j=0; j < picnicTCount; j++){
             PicnicTableEntry picTE;
             picTE = Db->picnicTableTable->picnicT_entries[j];
             char *currentEntryNeighName;
             currentEntryNeighName = NULL;
-
+            // This for loop will try to look up the neighbourhood name for the current picnic table entry that we're on
             for(k=0; k < Db->neighborhoodTable->neighbourhoodT_ElementCount; k++){
                 if(Db->neighborhoodTable->neighbourhoodT_entries[k].code == picTE.neighbhdId){
                     currentEntryNeighName = Db->neighborhoodTable->neighbourhoodT_entries[k].value;
@@ -437,6 +499,9 @@ void reportByNeighbourhood(){
                 structuralEC = Db->structuralMaterialTable->tableT_ElementCount;
                 //neighEC = Db->neighborhoodTable->neighbourhoodT_ElementCount;
 
+                // For loop that will find the name for the table type 
+                // this will check to see if the lookup entry's ID (code) matches the one from the PicnicTable entry, it it does it assigns the 
+                // mathcing/corresponding/respcted name to tableT
                 for (k=0; k < tableTEC; k++){
                     if(Db->tableTypeTable->tableT_entries[k].code == picTE.tableTypeId){
                         tableT = Db->tableTypeTable->tableT_entries[k].value;
@@ -444,12 +509,21 @@ void reportByNeighbourhood(){
                     }
                 }
 
+                // Same logic is implemented for surface material
+                // For loop that will find the name for the Surface Material 
+                // this will check to see if the surface material lookup entry's ID (code) matches the one from the PicnicTable entry, it it does it assigns the 
+                // mathcing/corresponding/respcted name to surfaceMat
                 for(k=0; k < surfaceMEC; k++){
                     if(Db->surfaceMaterialTable->tableT_entries[k].code == picTE.surfaceMaterialId){
                         surfaceMat= Db->surfaceMaterialTable->tableT_entries[k].value;
                         break;
                     }
                 }
+
+                // Same logic is implemented for structural material
+                // For loop that will find the name for the Surface Material 
+                // this will check to see if the structural material lookup entry's ID (code) matches the one from the PicnicTable entry, it it does it assigns the 
+                // mathcing/corresponding/respcted name to structuralMat
 
                 for(k=0; k < structuralEC; k++){
                     if(Db->structuralMaterialTable->tableT_entries[k].code == picTE.structuralMaterialId){
@@ -458,13 +532,7 @@ void reportByNeighbourhood(){
                     }
                 }
 
-                /*for(k=0; k < neighEC; k++){
-                    if(Db->neighborhoodTable->neighbourhoodT_entries[k].code == picTE.neighbhdId){
-                        neighbourhoodName = Db->neighborhoodTable->neighbourhoodT_entries[k].value;
-                        break;
-                    }
-                }*/
-
+                // Print out the results - according to how its mentioned its suppose to look like the example PDF (similar to reportbyWard - except ordered for neighbourhood Alphebrtcially)
                 printf("%d     %s     %s     %s     %s     %d     %s     %s     %s\n", picTE.siteId, tableT, surfaceMat, structuralMat, picTE.streetAvenue, picTE.neighbhdId, currentEntryNeighName, picTE.latitude, picTE.longitude);
 
             }
@@ -480,37 +548,48 @@ void reportByNeighbourhood(){
     // - https://www.w3schools.com/dsa/dsa_algo_bubblesort.php
 
 void reportByWard(){
-    int i, j, k;
-    char *wardArray[64];
-    char *currentWard, *tmpWard;
+    int i, j, k; // Initalize variables i, j, k (ints) - which will be used in our Loops (mainly nested for loops)
+    char *wardArray[64]; // initalize a string/char array that is storeed as a pointer called neighArray - which stores up to 64 strings/chars
+    char *currentWard, *tmpWard; // Initalize variable currentNeighbourName, tmpNeigh, which are chars and pointers 
     int wardAddedCounter;
     int picnicTCount, diffWardCount, tableTEC, surfaceMEC, structuralEC, neighEC;
+    // picnicTCount is the total numeber of entries
+    // diffWardCount is how many different wards we've found.
+    // wardAddedCounter will check to see if the ward is whithin the Array,
+    //tableTEC, surfaceMEC, structuralEC, neighEC, are variables that will store their respectd element count (just used for simplicity and visual sake later on in our loops)
 
-    picnicTCount = Db->picnicTableTable->picnicT_ElementCount;
+    // All very similar to the previous function reportByNieghbourhood ^
+
+    picnicTCount = Db->picnicTableTable->picnicT_ElementCount; // Store the number of picnic tables 
     diffWardCount = 0; // distinct / different wards
 
+    // Error Check - this will simply make sure that our picnicTableTable and/or Db are NULL - which is it is - will return NULL 
+    // as we cant count entries using the Tables and Db that are empty / NULL
     if(Db == NULL || Db->picnicTableTable == NULL){
         printf("Error - No Database Available, or No Elements Within PicnicTable Available");
         return 0;
     }
 
+    // For loop that will iterate through all of the picnicTable entries - and will extract the ward for each table entry
+     // Very similar to reportByWard
     for(i=0; i < picnicTCount; i++){
          currentWard = Db->picnicTableTable->picnicT_entries[i].ward;
          wardAddedCounter = 0; //already seen this ward (alreadyadded)
-
+    
+         // similarly to reportByNeighbourhood - this will just check to see if the current Ward in our iteration already exists in the wardArray
          for(j=0; j < diffWardCount; j++){
-            if(strcmp(wardArray[j], currentWard) == 0){
-                wardAddedCounter = 1;
+            if(strcmp(wardArray[j], currentWard) == 0){ // if the Names match (currentWard we're on in our iteration and ward in the Array at that given iteration)
+                wardAddedCounter = 1; // set the counter / flag to 1 indicating that this alreayd exists in the array
                 break;
             }
          }
-
+         // if the Ward does not exist within the array, add it to the array 
          if(wardAddedCounter == 0){
             wardArray[diffWardCount++] = currentWard;
          }
 
     }
-
+    // This nested for loop, will help rearrange / sort the wards in order
     for(i=0; i < diffWardCount; i++){
         for(j=0; j < diffWardCount; j++){
             if(strcmp(wardArray[i], wardArray[j]) < 0){
@@ -521,15 +600,17 @@ void reportByWard(){
             }
         }
     }
-
+    // For loop, that will help in printing and formatting our output, that should be similar to the one given in the reportByWard in the example PDF
     for(i=0; i < diffWardCount; i++){
-        printf("\n%s\n", wardArray[i]);
+        printf("\n%s\n", wardArray[i]); // This will print out each Unqiue Ward as the Header (Ward 1, Ward 2, Ward 3, etc...., or how many of the wards there are but in ORDER)
         printf("************************************************\n");
-
+        // For loop that will iterate through each and every picnic table entry
+        // and will store the given entry (at the index position) in the variable picTE
         for(j=0; j < picnicTCount; j++){
             PicnicTableEntry picTE;
             picTE = Db->picnicTableTable->picnicT_entries[j];
 
+            // This will whcekc to see if the entry belongs to the current ward being printed 
             if(strcmp(picTE.ward, wardArray[i]) == 0){
                 // Since these are integer values, PicnicTable doesnt store full names like "Wood" - 
                 // It Uses codes / ID's that are associated with certain values that link to the lookup tables (TableType, SurfaceMat, StructMat, Neigh...)
@@ -544,32 +625,51 @@ void reportByWard(){
                 tableTEC = Db->tableTypeTable->tableT_ElementCount;
                 surfaceMEC = Db->surfaceMaterialTable->tableT_ElementCount;
                 structuralEC = Db->structuralMaterialTable->tableT_ElementCount;
-                neighEC = Db->neighborhoodTable->neighbourhoodT_ElementCount;
+                neighEC = Db->neighborhoodTable->neighbourhoodT_ElementCount
 
+                // Similiary to the reportByNeighbourhood, this will do the same where:
+                // For loop that will find the ward for the table type 
+                // this will check to see if the lookup entry's ID (code) matches the one from the PicnicTable entry, it it does it assigns the 
+                // mathcing/corresponding/respcted name to tableT
                 for (k=0; k < tableTEC; k++){
                     if(Db->tableTypeTable->tableT_entries[k].code == picTE.tableTypeId){
                         tableT = Db->tableTypeTable->tableT_entries[k].value;
                         break;
                     }
                 }
+
+                // Same logic is implemented for surface material
+                // For loop that will find the name for the Surface Material 
+                // this will check to see if the surface material lookup entry's ID (code) matches the one from the PicnicTable entry, it it does it assigns the 
+                // mathcing/corresponding/respcted name to surfaceMat
                 for(k=0; k < surfaceMEC; k++){
                     if(Db->surfaceMaterialTable->tableT_entries[k].code == picTE.surfaceMaterialId){
                         surfaceMat= Db->surfaceMaterialTable->tableT_entries[k].value;
                         break;
                     }
                 }
+
+                // Same logic is implemented for surface material
+                // For loop that will find the name for the Surface Material 
+                // this will check to see if the surface material lookup entry's ID (code) matches the one from the PicnicTable entry, it it does it assigns the 
+                // mathcing/corresponding/respcted name to structuralMat
                 for(k=0; k < structuralEC; k++){
                     if(Db->structuralMaterialTable->tableT_entries[k].code == picTE.structuralMaterialId){
                         structuralMat = Db->structuralMaterialTable->tableT_entries[k].value;
                         break;
                     }
                 }
+                // Same logic is implemented for surface material
+                // For loop that will find the name for the Surface Material 
+                // this will check to see if the surface material lookup entry's ID (code) matches the one from the PicnicTable entry, it it does it assigns the 
+                // mathcing/corresponding/respcted name to neighbourhood Name
                 for(k=0; k < neighEC; k++){
                     if(Db->neighborhoodTable->neighbourhoodT_entries[k].code == picTE.neighbhdId){
                         neighbourhoodName = Db->neighborhoodTable->neighbourhoodT_entries[k].value;
                         break;
                     }
                 }
+                // Print out the results - according to how its mentioned its suppose to look like the example PDF (similar to reportbyNeighboourhood - except ordered for ward - Reported by Ward)
                 printf("%d     %s     %s     %s     %s     %d     %s     %s     %s\n", picTE.siteId, tableT, surfaceMat, structuralMat, picTE.streetAvenue, picTE.neighbhdId, neighbourhoodName, picTE.latitude, picTE.longitude);
 
             }
