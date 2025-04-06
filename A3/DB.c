@@ -784,6 +784,3 @@ void freeDB(){
     Db = NULL; //set to NULL to prevent use after free
 }
 
-int main() {
-    return 0;
-}
