@@ -155,5 +155,11 @@ void reportByWard();
  */
 void freeDB();
 
+void countEntries(char *memberName, char *value);
+void sortByMember(char *memberName);
+void editTableEntry(int tableId, char *memberName, char *newValue);
+void reportByWard();
+void reportByNeighbourhood();
+
 
 #endif

@@ -150,6 +150,32 @@ void exportDB(char *filename){
  *   6- Ward
  */
 int countEntries(char *memberName, char * value){
+
+    int count = 0;
+
+    for (int i = 0; i < Db->picnicTableTable->picnicT_ElementCount; i++) {
+        PicnicTableEntry entry = Db->picnicTableTable->picnicT_entries[i];
+
+        if (strcmp(memberName, "ward") == 0 && strcmp(entry.ward, value) == 0)
+            count++;
+        else if (strcmp(memberName, "tableId") == 0 && entry.tableId == atoi(value))
+            count++;
+        else if (strcmp(memberName, "siteId") == 0 && entry.siteId == atoi(value))
+            count++;
+        else if (strcmp(memberName, "streetAvenue") == 0 && strcmp(entry.streetAvenue, value) == 0)
+            count++;
+        else if (strcmp(memberName, "neighbhdId") == 0 && entry.neighbhdId == atoi(value))
+            count++;
+        else if (strcmp(memberName, "latitude") == 0 && strcmp(entry.latitude, value) == 0)
+            count++;
+        else if (strcmp(memberName, "longitude") == 0 && strcmp(entry.longitude, value) == 0)
+            count++;
+    }
+
+    return count;
+}
+
+
     //return 0; // Return for now - as we're creating empty functions (will be worked on later) for MS1
     int i,j,nbhdID,entryCount; // Initalize i, j, nbhdID, entryCount (int) - that will be used later on in/for the for loops tec
     entryCount = 0; // initalize the entryCount to 0 - this variable will keep track of how many matched entries we've found - which we currently intialized at 0
