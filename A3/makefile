@@ -17,7 +17,7 @@ testingFunctionExec:
 	./DBTest
 
 clean:
-	rm -f DBExec A3
+	rm -f DBExec  DBTest A3
 
 package:
 	tar -czvf $(PACKAGE_NAME) $(SRC) makefile README Tests DB_impl.h DB_impl.c dashboard.c
