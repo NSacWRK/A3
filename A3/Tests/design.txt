@@ -1,0 +1,22 @@
+Design Process:
+
+There were many decisions that went made into completing the design process, whether that may have been from team consensus or what we felt like 
+indiviually would work best from past experiences from past assignemnts - such as using similar Implementation from past Lab Asssignemnts or even the assignemnts
+we've done in the past. For an example - in bit of the importDB, exportDB, freeDB, there were many insatnces and similairties between File I/O source codes that the teacher had provided
+and from assignments we've done and labs, so we used bit of that as a guide to help us. 
+
+Aside from that, there were many instances where the funtions we had to implement could use the same type of formatting, direction for implemnation.
+For an example, both reportByWard and reportByNeighbourhood function implementation was to sort the Ward in ascending order, and Neighbourhoods by Alphabtical order,
+so the same techniques, with slight differences of course for specific implemetation for the certain functiosn needed for it to work could be used in both functions 
+for their implementation.
+
+As for the usage of INIT_SIZE (where we had the option to use this depending on if used Arrays or Linked List) - we chose to go with Arrays;
+as we've had greater experience dealing with this in multiple labs and assignments, and was something that most of us were familiar with. And Arrays 
+did come with more advanatges for us (easier accessbility for certain functions (such as editTableEntry) where editing the table entry can be easily accessed by this).
+
+In addition, there were many instances where we encoutnered issues Some of the issues we
+encountered were some of our functions not working accordingly. But even then, some of us came together to discuss where certain issues may be pertainng
+in order to fix those issues. We also used Lecture Notes/Slides, Lab Notes/Slides, and Source Codes teachers provided
+were also used in combating certain issues to see if our implemntation of certain functions were incorrect many times - and even looking at past coding assignments 
+we did in our labs (Assignment #1 and #2) and other Lab Assignment Submissions we had (as some of them carried forward) - and the implemntation could help us 
+pinpoint if our function inmplemnetation was incorrect or wrong. 
