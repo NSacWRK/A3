@@ -314,103 +314,42 @@ void sortByMember(char *memberName){
  //* If the new value is not found in the existing tables, this value must be added to the 
  //* corresponding table.
  
-void editTableEntry(int tableID, char *memberName, char *value){
+ void editTableEntry(int tableID, char *memberName, char *value){
+    // Error Check
+    if (Db == NULL || Db->picnicTableTable == NULL){
+        printf("Error - No Database Available, or No Elements Within PicnicTable Available\n");
+        return;
+    }
 
-    int i, j, picnicTElementC; // Initalize the variables i , j , picnicTElementC (ints) => i and j will both be used for loops, picnicTElementC is used to count the number of picnic table entries
-    int newValueInsertIndex; // initalize the variable newValueInsertIndex (int)
-    
-    // Error Check - this will simply make sure that our picnicTableTable and/or Db are NULL - which is it is - will return NULL 
-    // as we cant count entries using the Tables and Db that are empty / NULL
+    int picnicTElementC = Db->picnicTableTable->picnicT_ElementCount;
 
-    if(Db == NULL || Db->picnicTableTable == NULL){
-        printf("Error - No Database Available, or No Elements Within PicnicTable Available");
-        return 0;
-     }
-
-     picnicTElementC = Db->picnicTableTable->picnicT_ElementCount; // This will get and store the total number of entries/element count in the picnicTable Table
-     // This for loop will iterate through each of the entries in the table
-     for(i=0; i < picnicTElementC; i++){
-        // First If Statement that will check to see if the current entry's tableId matches the tableId passed in the paramter / the one we want to edit/update
+    for(int i = 0; i < picnicTElementC; i++){
         if(Db->picnicTableTable->picnicT_entries[i].tableId == tableID){
-            // Second if statement that will check to see if the member name (passed in the paramater) is Surface Material - which is the 
-            //member that we want to update 
-            if(strcmp(memberName, "Surface Material") == 0){
-                // Nested for Loop that will check to see and will iterate through the surface material lookup table and see if the value exists
-                for(j=0; j < Db->surfaceMaterialTable->tableT_ElementCount; j++){
-                    // If statement that IF there exists a value, we set the surfaceMaterialId in the picnic entry to the code of the macthed value 
-                    if(strcmp(Db->surfaceMaterialTable->tableT_entries[j].value, value) == 0){
-                        Db->picnicTableTable->picnicT_entries[i].surfaceMaterialId = Db->surfaceMaterialTable->tableT_entries[j].code;
-                        return; // return 
-                    }
-                }
-                // Otherwise as stated in Db.h " If the new value is not found in the existing tables, this value must be added to the  corresponding table."
-                // which is what we'll be doing here 
-                newValueInsertIndex = Db->surfaceMaterialTable->tableT_ElementCount; // First - Calaculate the Index where we want to insert/update or where the new value will go
-                Db->surfaceMaterialTable->tableT_entries[newValueInsertIndex].code = newValueInsertIndex; // Second - we will set a new code (foreign key or ID) - using the index 
-                Db->surfaceMaterialTable->tableT_entries[newValueInsertIndex].value = malloc(strlen(value) + 1); // Third - we will dynamically allocate memory for the newly addded value, and then copy the value
-                strcpy(Db->surfaceMaterialTable->tableT_entries[newValueInsertIndex].value, value); // Copy the new value
-                Db->picnicTableTable->picnicT_entries[i].surfaceMaterialId = newValueInsertIndex; // Fourth - We will assign the new ID to the picnic entry and increase the element count (as we've added a new value - increasing the count)
-                Db->surfaceMaterialTable->tableT_ElementCount++; // Increase Element Count
-                return;
+            if (strcmp(memberName, "Surface Material") == 0) {
+                int id = lookupOrAddSurfaceMaterial(value);
+                Db->picnicTableTable->picnicT_entries[i].surfaceMaterialId = id;
+                printf("Updated Surface Material for Table ID %d\n", tableID);
             }
-
-            // Similarly to the surface Material, this will do the same but for Structural Material
-            // else if statement that will check to see if the member name (passed in the paramater) is Structural Material - which is the 
-            // member that we want to update 
-            else if(strcmp(memberName, "Structural Material") == 0){
-                //for Loop that will check to see and will iterate through the surface material lookup table and see if the value exists
-                for(j=0; j < Db->structuralMaterialTable->tableT_ElementCount; j++){
-                    // If statement that IF there exists a value, we set the structuralMaterialId in the picnic entry to the code of the macthed value 
-                    if (strcmp(Db->structuralMaterialTable->tableT_entries[j].value, value) == 0){
-                        Db->picnicTableTable->picnicT_entries[i].structuralMaterialId = Db->structuralMaterialTable->tableT_entries[j].code;
-                        return; // return
-                    }
-                }
-                // Otherwise as stated in Db.h " If the new value is not found in the existing tables, this value must be added to the  corresponding table."
-                // which is what we'll be doing here 
-                newValueInsertIndex = Db->structuralMaterialTable->tableT_ElementCount;// First - Calaculate the Index where we want to insert/update or where the new value will go
-                Db->structuralMaterialTable->tableT_entries[newValueInsertIndex].code = newValueInsertIndex; // Second - we will set a new code (foreign key or ID) - using the index 
-                Db->structuralMaterialTable->tableT_entries[newValueInsertIndex].value = malloc(strlen(value) + 1); // Third - we will dynamically allocate memory for the newly addded value, and then copy the value
-                strcpy(Db->structuralMaterialTable->tableT_entries[newValueInsertIndex].value, value); // Copy the new value
-                Db->picnicTableTable->picnicT_entries[i].structuralMaterialId = newValueInsertIndex; // Fourth - We will assign the new ID to the picnic entry and increase the element count (as we've added a new value - increasing the count)
-                Db->structuralMaterialTable->tableT_ElementCount++; // Increase Element Count
-                return;
+            else if (strcmp(memberName, "Structural Material") == 0) {
+                int id = lookupOrAddStructuralMaterial(value);
+                Db->picnicTableTable->picnicT_entries[i].structuralMaterialId = id;
+                printf("Updated Structural Material for Table ID %d\n", tableID);
             }
-
-            // Similarly to the structural Material, this will do the same but for Table Type
-            // else if statement that will check to see if the member name (passed in the paramater) is Structural Material - which is the 
-            // member that we want to update 
-
-            else if(strcmp(memberName, "Table Type") == 0){
-                //for Loop that will check to see and will iterate through the surface material lookup table and see if the value exists
-                for(j=0; j < Db->tableTypeTable->tableT_ElementCount; j++){
-                    // If statement that IF there exists a value, we set the tableTypeId in the picnic entry to the code of the macthed value 
-                    if (strcmp(Db->tableTypeTable->tableT_entries[j].value, value) == 0){
-                        Db->picnicTableTable->picnicT_entries[i].tableTypeId = Db->tableTypeTable->tableT_entries[j].code;
-                        return; // return
-                    }
-                }
-                // Otherwise as stated in Db.h " If the new value is not found in the existing tables, this value must be added to the  corresponding table."
-                // which is what we'll be doing here 
-                newValueInsertIndex = Db->tableTypeTable->tableT_ElementCount; // First - Calaculate the Index where we want to insert/update or where the new value will go
-                Db->tableTypeTable->tableT_entries[newValueInsertIndex].code = newValueInsertIndex; // Second - we will set a new code (foreign key or ID) - using the index 
-                Db->tableTypeTable->tableT_entries[newValueInsertIndex].value = malloc(strlen(value) + 1); // Third - we will dynamically allocate memory for the newly addded value, and then copy the value
-                strcpy(Db->tableTypeTable->tableT_entries[newValueInsertIndex].value, value); // Copy the new value
-                Db->picnicTableTable->picnicT_entries[i].tableTypeId = newValueInsertIndex;// Fourth - We will assign the new ID to the picnic entry and increase the element count (as we've added a new value - increasing the count)
-                Db->tableTypeTable->tableT_ElementCount++; // Increase Element Count
-                return;
+            else if (strcmp(memberName, "Table Type") == 0) {
+                int id = lookupOrAddTableType(value);
+                Db->picnicTableTable->picnicT_entries[i].tableTypeId = id;
+                printf("Updated Table Type for Table ID %d\n", tableID);
             }
-            // Else - return an Error Message indicating that Chosen Member Name is not Valid
-            else{
-                printf("Error - Member Name Chosen Not Valid.\n");
-                return;
+            else {
+                printf("Invalid member name. Only Surface Material, Structural Material, and Table Type can be edited.\n");
             }
+            return;
         }
-     }
-     // If there is no matching table ID - we will throw and return an error message as well
-     printf("Error - Invalid Table ID\n");
-     return;
+    }
+
+    printf("No entry with Table ID %d found.\n", tableID);
 }
+
 
 // this function produces a listing of picnic tables grouped by neighbourhoods in ascending alphabetical order
 // Similarly to ReportByWard - the same format and approach was used (as they're quite similar in functionality - just one sorts according to 
