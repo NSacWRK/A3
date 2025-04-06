@@ -33,7 +33,7 @@
  * Lecture instructor: <TODO: Dhara Wagh>
  */
 
-#include "DB.h"      /* Import the public database header. */
+//#include "DB.h"      /* Import the public database header. */
 
 //nav will also do this 
 //here I will figure out what to do 
@@ -44,7 +44,7 @@
 #include <string.h>
 #include "DB_impl.h"
 
-DataBase *Db;
+DataBase *Db = NULL;
 
 // Reusable helper for reallocating any lookup table
 #define RESIZE_IF_NEEDED(array, count, capacity, type) \
@@ -56,99 +56,100 @@ DataBase *Db;
 // -------------- LOOKUP + ADD FUNCTIONS -----------------
 
 int lookupOrAddTableType(const char *type) {
-    for (int i = 0; i < Db->tableTypeCount; i++) {
-        if (strcmp(Db->tableTypes[i].type, type) == 0)
-            return Db->tableTypes[i].id;
+    for (int i = 0; i < Db->tableTypeTable->count; i++) {
+        if (strcmp(Db->tableTypeTable->entries[i].type, type) == 0)
+            return Db->tableTypeTable->entries[i].id;
     }
 
-    RESIZE_IF_NEEDED(Db->tableTypes, Db->tableTypeCount, Db->tableTypeCapacity, TableTypeEntry);
+    RESIZE_IF_NEEDED(Db->tableTypeTable->entries, Db->tableTypeTable->count, Db->tableTypeTable->capacity, TableTypeEntry);
 
-    int newId = Db->tableTypeCount + 1;
-    Db->tableTypes[Db->tableTypeCount].id = newId;
-    strncpy(Db->tableTypes[Db->tableTypeCount].type, type, sizeof(Db->tableTypes[0].type));
-    Db->tableTypeCount++;
+    int newId = Db->tableTypeTable->count + 1;
+    Db->tableTypeTable->entries[Db->tableTypeTable->count].id = newId;
+    strncpy(Db->tableTypeTable->entries[Db->tableTypeTable->count].type, type, sizeof(Db->tableTypeTable->entries[0].type));
+    Db->tableTypeTable->count++;
 
     return newId;
 }
 
 int lookupOrAddSurfaceMaterial(const char *material) {
-    for (int i = 0; i < Db->surfaceMaterialCount; i++) {
-        if (strcmp(Db->surfaceMaterials[i].material, material) == 0)
-            return Db->surfaceMaterials[i].id;
+    for (int i = 0; i < Db->surfaceMaterialTable->count; i++) {
+        if (strcmp(Db->surfaceMaterialTable->entries[i].material, material) == 0)
+            return Db->surfaceMaterialTable->entries[i].id;
     }
 
-    RESIZE_IF_NEEDED(Db->surfaceMaterials, Db->surfaceMaterialCount, Db->surfaceMaterialCapacity, SurfaceMaterialEntry);
+    RESIZE_IF_NEEDED(Db->surfaceMaterialTable->entries, Db->surfaceMaterialTable->count, Db->surfaceMaterialTable->capacity, SurfaceMaterialEntry);
 
-    int newId = Db->surfaceMaterialCount + 1;
-    Db->surfaceMaterials[Db->surfaceMaterialCount].id = newId;
-    strncpy(Db->surfaceMaterials[Db->surfaceMaterialCount].material, material, sizeof(Db->surfaceMaterials[0].material));
-    Db->surfaceMaterialCount++;
+    int newId = Db->surfaceMaterialTable->count + 1;
+    Db->surfaceMaterialTable->entries[Db->surfaceMaterialTable->count].id = newId;
+    strncpy(Db->surfaceMaterialTable->entries[Db->surfaceMaterialTable->count].material, material, sizeof(Db->surfaceMaterialTable->entries[0].material));
+    Db->surfaceMaterialTable->count++;
 
     return newId;
 }
 
 int lookupOrAddStructuralMaterial(const char *material) {
-    for (int i = 0; i < Db->structuralMaterialCount; i++) {
-        if (strcmp(Db->structuralMaterials[i].material, material) == 0)
-            return Db->structuralMaterials[i].id;
+    for (int i = 0; i < Db->structuralMaterialTable->count; i++) {
+        if (strcmp(Db->structuralMaterialTable->entries[i].material, material) == 0)
+            return Db->structuralMaterialTable->entries[i].id;
     }
 
-    RESIZE_IF_NEEDED(Db->structuralMaterials, Db->structuralMaterialCount, Db->structuralMaterialCapacity, StructuralMaterialEntry);
+    RESIZE_IF_NEEDED(Db->structuralMaterialTable->entries, Db->structuralMaterialTable->count, Db->structuralMaterialTable->capacity, StructuralMaterialEntry);
 
-    int newId = Db->structuralMaterialCount + 1;
-    Db->structuralMaterials[Db->structuralMaterialCount].id = newId;
-    strncpy(Db->structuralMaterials[Db->structuralMaterialCount].material, material, sizeof(Db->structuralMaterials[0].material));
-    Db->structuralMaterialCount++;
+    int newId = Db->structuralMaterialTable->count + 1;
+    Db->structuralMaterialTable->entries[Db->structuralMaterialTable->count].id = newId;
+    strncpy(Db->structuralMaterialTable->entries[Db->structuralMaterialTable->count].material, material, sizeof(Db->structuralMaterialTable->entries[0].material));
+    Db->structuralMaterialTable->count++;
 
     return newId;
 }
 
 void lookupOrAddNeighbourhood(int id, const char *name) {
-    for (int i = 0; i < Db->neighbourhoodCount; i++) {
-        if (Db->neighbourhoods[i].id == id)
-            return; // already exists
+    for (int i = 0; i < Db->neighborhoodTable->count; i++) {
+        if (Db->neighborhoodTable->entries[i].id == id)
+            return;
     }
 
-    RESIZE_IF_NEEDED(Db->neighbourhoods, Db->neighbourhoodCount, Db->neighbourhoodCapacity, NeighbourhoodEntry);
+    RESIZE_IF_NEEDED(Db->neighborhoodTable->entries, Db->neighborhoodTable->count, Db->neighborhoodTable->capacity, NeighbourhoodEntry);
 
-    Db->neighbourhoods[Db->neighbourhoodCount].id = id;
-    strncpy(Db->neighbourhoods[Db->neighbourhoodCount].name, name, sizeof(Db->neighbourhoods[0].name));
-    Db->neighbourhoodCount++;
+    Db->neighborhoodTable->entries[Db->neighborhoodTable->count].id = id;
+    strncpy(Db->neighborhoodTable->entries[Db->neighborhoodTable->count].name, name, sizeof(Db->neighborhoodTable->entries[0].name));
+    Db->neighborhoodTable->count++;
 }
 
 // -------------- REVERSE LOOKUP (ID → STRING) -----------------
 
 const char* getTableTypeById(int id) {
-    for (int i = 0; i < Db->tableTypeCount; i++) {
-        if (Db->tableTypes[i].id == id)
-            return Db->tableTypes[i].type;
+    for (int i = 0; i < Db->tableTypeTable->count; i++) {
+        if (Db->tableTypeTable->entries[i].id == id)
+            return Db->tableTypeTable->entries[i].type;
     }
     return "Unknown";
 }
 
 const char* getSurfaceMaterialById(int id) {
-    for (int i = 0; i < Db->surfaceMaterialCount; i++) {
-        if (Db->surfaceMaterials[i].id == id)
-            return Db->surfaceMaterials[i].material;
+    for (int i = 0; i < Db->surfaceMaterialTable->count; i++) {
+        if (Db->surfaceMaterialTable->entries[i].id == id)
+            return Db->surfaceMaterialTable->entries[i].material;
     }
     return "Unknown";
 }
 
 const char* getStructuralMaterialById(int id) {
-    for (int i = 0; i < Db->structuralMaterialCount; i++) {
-        if (Db->structuralMaterials[i].id == id)
-            return Db->structuralMaterials[i].material;
+    for (int i = 0; i < Db->structuralMaterialTable->count; i++) {
+        if (Db->structuralMaterialTable->entries[i].id == id)
+            return Db->structuralMaterialTable->entries[i].material;
     }
     return "Unknown";
 }
 
 const char* getNeighbourhoodNameById(int id) {
-    for (int i = 0; i < Db->neighbourhoodCount; i++) {
-        if (Db->neighbourhoods[i].id == id)
-            return Db->neighbourhoods[i].name;
+    for (int i = 0; i < Db->neighborhoodTable->count; i++) {
+        if (Db->neighborhoodTable->entries[i].id == id)
+            return Db->neighborhoodTable->entries[i].name;
     }
     return "Unknown";
 }
+
 
 //extra notes for this file: 
 /*

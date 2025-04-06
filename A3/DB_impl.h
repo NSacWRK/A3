@@ -18,9 +18,10 @@
 #ifndef DB_IMPL_H
 #define DB_IMPL_H
 
-#define INIT_SIZE 10
+#include "DB.h"
 
 // Table Type Lookup Entry
+
 typedef struct {
     int id;
     char type[100];
@@ -87,7 +88,11 @@ typedef struct {
 } DataBase;
 
 // Global DB Variable
-extern DataBase *Db;
+//extern DataBase *Db;
+
+
+void importDB(char *filename);
+void exportDB(char *filename);
 
 // Helper Lookup/Add Prototypes
 int lookupOrAddTableType(const char *type);

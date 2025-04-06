@@ -93,9 +93,9 @@ extern DataBase *Db;
 
 // *********************
 // Ask if we should implement importDB and exportDB in the header file (mentions not to make any changes here)
-//void importDB(char *filename);
+void importDB(char *filename);
 
-//void exportDB(char *filename);
+void exportDB(char *filename);
 
 /*
  * Take the name of a member of the picnicTable entry and a value for that member 
@@ -155,11 +155,7 @@ void reportByWard();
  */
 void freeDB();
 
-void countEntries(char *memberName, char *value);
-void sortByMember(char *memberName);
-void editTableEntry(int tableId, char *memberName, char *newValue);
-void reportByWard();
-void reportByNeighbourhood();
+
 
 
 #endif
